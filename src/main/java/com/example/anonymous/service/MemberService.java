@@ -52,7 +52,7 @@ public class MemberService {
         }
 
        //이미 존재하는 이메일인 경우
-       //matches를 사용하는 경우 list iterator를 사용해야 하기 때문에 단일 hash로 구현
+       //matches를 사용하는 경우 list iterator를 사용해야 하기 때문에 단일 hash로 구현하기
        if(memberRepository.findMemberByMemberEmail(encryptEmail)!=null){
            throw new InvalidInputException("이미 가입한 메일입니다.");
        }
