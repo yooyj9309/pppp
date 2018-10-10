@@ -3,7 +3,8 @@ package com.example.anonymous.jpa;
 import com.example.anonymous.domain.Member;
 import com.example.anonymous.domain.MemberRole;
 import com.example.anonymous.repository.MemberRepository;
-import lombok.extern.java.Log;
+
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,22 +17,18 @@ import java.util.Date;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Log
+
 public class JPATest {
 
     @Autowired
     MemberRepository memberRepository;
-
+    @After
+    public void cleanup(){
+        memberRepository.deleteAll();
+    }
     @Test
     public void insertTest() {
         for(int i=0; i<100; i++) {
-            Member member = new Member();
-            member.setMemberEmail("dd"+i);
-            member.setMemberPw("pw"+i);
-            member.setMemberModDate(new Date());
-            member.setMemberRegDate(new Date());
-            member.setMemberNick("nick"+i);
-            member.setMemberCheck(i);
             MemberRole role = new MemberRole();
             if(i <= 80) {
                 role.setRoleName("BASIC");
@@ -40,8 +37,22 @@ public class JPATest {
             }else {
                 role.setRoleName("ADMIN");
             }
-            member.setMemberStatus(Arrays.asList(role));
+    //given
+            Member member = Member.builder()
+                    .memberCheck(i)
+                    .memberEmail("Email"+i)
+                    .memberRegDate(new Date())
+                    .memberModDate(new Date())
+                    .memberNick("Nick"+i)
+                    .memberPw("Pw"+i)
+                    .memberPwCheck("pwCheck")
+                    .emailKey("key")
+                    .memberStatus(Arrays.asList(role))
+                    .build();
+
             memberRepository.save(member);
+
+
         }
     }
 

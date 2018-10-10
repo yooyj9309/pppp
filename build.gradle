@@ -28,9 +28,14 @@ ext['hibernate.version'] = '5.2.11.Final'
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    
     runtime('mysql:mysql-connector-java')
+    
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile 'org.springframework.boot:spring-boot-starter-mail'
+    compile "org.springframework:spring-context-support"
+    
     compileOnly('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
