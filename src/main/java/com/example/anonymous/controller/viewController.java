@@ -14,6 +14,11 @@ public class viewController {
     @Autowired
     private MemberService memberService;
 
+    @GetMapping("/")
+    public String getLogin() {
+        return "login";
+    }
+
     @GetMapping("/login")
     public String getLoginView() {
         return "login";
