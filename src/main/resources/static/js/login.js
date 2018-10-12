@@ -22,7 +22,7 @@ $('.container .bg').mousemove(
 		});
 
 $(document).ready(function() {
-	
+
 	$("#loginBtn").click(function() {
 
 		var userLoginId = jQuery.trim($("#userLoginId").val());

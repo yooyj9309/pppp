@@ -46,7 +46,7 @@ public class JPATest {
                     .memberNick("Nick"+i)
                     .memberPw("Pw"+i)
                     .memberPwCheck("pwCheck")
-                    .emailKey("key")
+                    .emailKey("key"+i)
                     .memberStatus(Arrays.asList(role))
                     .build();
 

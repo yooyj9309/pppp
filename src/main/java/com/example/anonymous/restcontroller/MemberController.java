@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -23,10 +25,12 @@ public class MemberController {
     public ResponseEntity<String> join(Member member) {
        LOGGER.info(member.toString());
         memberService.insertMember(member);
-      //  rttr.addFlashAttribute("msg","regSuccess");
+
         LOGGER.info("Signup SERVICE 로직 성공");
         return new ResponseEntity<String>("해당 메일로 인증 요청을 보냈습니다.", HttpStatus.OK);
     }
+
+
 
 
 }
