@@ -9,10 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
+
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.server.ServerErrorException;
+
 
 
 @ControllerAdvice()
@@ -28,6 +30,16 @@ public class ExceptionHandlerController {
         LOGGER.error("Exception message : " + ex.getMessage());
         ex.printStackTrace();
         return new ResponseEntity<String>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = MailException.class)
+    @ResponseBody
+    public ResponseEntity<?> MailSendException(HttpServletRequest request, MailException ex)
+    {
+        LOGGER.error("Exception type : " + ex.getClass().getName());
+        LOGGER.error("Exception message : " + ex.getMessage());
+        ex.printStackTrace();
+        return new ResponseEntity<String>("메일 인증 중 오류 발생.",HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = ServerException.class)
