@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
@@ -34,10 +35,12 @@ public class BoardController {
     BoardService boardService;
 
     @GetMapping("/main")
-    public String getMainView(Model model) {
+    public ModelAndView getMainView() {
+        ModelAndView mav = new ModelAndView();
         List<Board> boardList = boardService.getBoardList();
-        model.addAttribute("boardList",boardList);
-        return "main";
+        mav.setViewName("main");
+        mav.addObject("boardList",boardList);
+        return mav;
     }
     @PostMapping(value = "/main")
     public ResponseEntity<String> postContent(Board board, Principal principal, HttpSession session) {

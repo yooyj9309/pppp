@@ -17,7 +17,6 @@
 
     <!-- Custom styles for this template -->
     <link href="css/blog-home.css" rel="stylesheet">
-    <script src="../../../../../../Downloads/AuctionBoard/src/main/resources/static/js/auction/write.js"></script>
 
 </head>
 
@@ -47,6 +46,10 @@
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="modal"  data-target="#changeNick">내 정보 수정</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">로그아웃</a>
+
+                </li>
             </ul>
         </div>
     </div>
@@ -66,16 +69,16 @@
             </h1>
 
             <!-- Blog Post -->
-            <div class="card mb-4">
-                <img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">
+            <div  th:each ="board : ${boardList}" class="card mb-4">
+                <img class="card-img-top"  th:src="${board.filePath}" alt="Card image cap">
                 <div class="card-body">
-                    <h2 class="card-title">제목</h2>
-                    <p class="card-text">내용</p>
+                    <h2 class="card-title" th:text = "${board.boardSubject}"></h2>
+                    <p class="card-text"  th:text = "${board.boardContents}"></p>
                     <a href="#" class="btn btn-primary">댓글 보기 (댓글 수) &rarr;</a>
-                    <a href="#" class="btn btn-primary">좋아요 (좋아요 수) &rarr;</a>
+                    <a href="#" class="btn btn-primary" th:text = "${board.likeCnt}">&rarr;</a>
                 </div>
                 <div class="card-footer text-muted">
-                    Nick 게시일 Posted on January 1, 2017 by 조회수
+                    <label th:text = "${board.memberNick}"></label> <label th:text = "${#dates.format(board.boardRegDate, 'yyyy/MM/dd')}"></label>
                 </div>
             </div>
 
