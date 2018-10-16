@@ -46,11 +46,11 @@ public class ImgUtil {
         String imgPath = "";
         try {
             String realPath = ImgUtil.getRealPath(savePath, session);
-            String auctionImgFileName = imgfile.getOriginalFilename();
+            String boardImgFileName = imgfile.getOriginalFilename();
             String saveName = "";
 
-            if (!StringUtils.isEmpty(auctionImgFileName)) {
-                saveName = ImgUtil.renameTo(realPath, auctionImgFileName);
+            if (!StringUtils.isEmpty(boardImgFileName)) {
+                saveName = ImgUtil.renameTo(realPath, boardImgFileName);
                 try {
                     File file = new File(realPath, saveName);
                     imgfile.transferTo(file);
