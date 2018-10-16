@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Blind</title>
 
     <!-- Bootstrap core CSS -->
@@ -15,6 +17,7 @@
 
     <!-- Custom styles for this template -->
     <link href="css/blog-home.css" rel="stylesheet">
+    <script src="../../../../../../Downloads/AuctionBoard/src/main/resources/static/js/auction/write.js"></script>
 
 </head>
 
@@ -59,7 +62,7 @@
 
 
             <h1 class="my-4">Page Heading
-                <small>Secondary Text</small>
+                <small>[[${#httpServletRequest.remoteUser}]]</small> <!-- 이렇게 하면 세션 아이디를 볼수 있음-->
             </h1>
 
             <!-- Blog Post -->
@@ -99,30 +102,30 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="savePostsLabel">게시글 등록</h5>
+                <h5 class="modal-title" id="posting">게시글 등록</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id = "writeForm" encType="multipart/form-data">
                     <div class="form-group">
-                        <label for="title">제목</label>
-                        <input type="text" class="form-control" id="title" placeholder="제목을 입력하세요">
+                        <label for="imgFile">이미지</label>
+                        <input type="file" class="form-control" name="imgFile" id="imgFile" placeholder = "사진 업로드 하기">
                     </div>
                     <div class="form-group">
-                        <label for="author"> 작성자 </label>
-                        <input type="text" class="form-control" id="author" placeholder="작성자를 입력하세요">
+                        <label for="writeSubject">제목</label>
+                        <input type="text" class="form-control" name = "boardSubject" id="writeSubject" placeholder="제목을 입력하세요" required = "true">
                     </div>
                     <div class="form-group">
-                        <label for="content"> 내용 </label>
-                        <textarea class="form-control" id="content" placeholder="내용을 입력하세요"></textarea>
+                        <label for="writeContent"> 내용 </label>
+                        <textarea class="form-control" name = "boardContents" id="writeContent" placeholder="내용을 입력하세요" required = "true"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                <button type="button" class="btn btn-primary" id="btn-save">등록</button>
+                <button type="button" class="btn btn-primary" id="btnWrite">등록</button>
             </div>
         </div>
     </div>
@@ -132,7 +135,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="savePostsLabel">게시글 등록</h5>
+                <h5 class="modal-title" id="savePostsLabel">닉네임 수정</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -164,7 +167,7 @@
 <!-- Bootstrap core JavaScript -->
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
+<script src="js/write.js"></script>
 </body>
 
 </html>

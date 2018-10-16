@@ -5,9 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Getter
@@ -19,10 +17,13 @@ import java.util.Date;
 public class Board {
     // 게시판 ID
     @Id
-    @Column(nullable = false, unique = true, length=100)
-    private Integer boardId;
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long  boardId;
 
-    @Column(nullable = false, length=2000)
+    @Column(length = 500, nullable = false)
+    private String boardSubject;
+
+    @Column(columnDefinition = "TEXT", length=2000)
     // 게시판 내용
     private String boardContents;
 
@@ -37,31 +38,35 @@ public class Board {
     @Column(name = "boardRegDate", updatable=false)
     @CreationTimestamp
     // 등록 시간
-    private Date boardRegDate;
+    private Date boardRegDate ;
 
     @Column(name = "boardModDate")
     @UpdateTimestamp
     // 수정 시간
-    private Date boardModDate;
+    private Date boardModDate ;
 
-    @Column(nullable = false, length=20)
+    @Column( length=20, columnDefinition = "int default 0")
     // 좋아요 수
     private Integer likeCnt;
 
-    @Column(nullable = false, length=2)
+    @Column(length=2, columnDefinition = "int default 0")
     // 게시판 상태 코드
     private Integer boardStatus;
 
-    @Column(nullable = false, length=20)
+    @Column( length=20, columnDefinition = "int default 0")
     // 조회 수
     private Integer viewCnt;
 
-
+    @Transient
     private MultipartFile imgFile;
 
+    @Transient
+    private String memberEmail;
+
     @Builder
-    public Board(Integer boardId, String boardContents, String filePath, String memberNick, Date boardRegDate, Date boardModDate, Integer likeCnt, Integer boardStatus, Integer viewCnt, MultipartFile imgFile) {
+    public Board(Long boardId, String boardSubject, String boardContents, String filePath, String memberNick, Date boardRegDate, Date boardModDate, Integer likeCnt, Integer boardStatus, Integer viewCnt) {
         this.boardId = boardId;
+        this.boardSubject = boardSubject;
         this.boardContents = boardContents;
         this.filePath = filePath;
         this.memberNick = memberNick;
@@ -70,6 +75,5 @@ public class Board {
         this.likeCnt = likeCnt;
         this.boardStatus = boardStatus;
         this.viewCnt = viewCnt;
-        this.imgFile = imgFile;
     }
 }

@@ -44,7 +44,7 @@ $(document).ready(function() {
             data : param,
             success : function() {
                 alert("로그인에 성공하셨습니다.");
-                location.href = "/board"
+                location.href = "/main"
             },
             error : function(response) {
                 alert("실패"+response.responseText);

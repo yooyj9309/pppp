@@ -9,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
-
 @Controller
 public class viewController {
     @Autowired
@@ -18,18 +16,11 @@ public class viewController {
 
 
     @GetMapping("/login")
-    public String getLoginView(HttpServletRequest req) {
-        //String referer = req.getHeader("Referer");
-        // req.getSession().setAttribute("prevPage", referer);
-
+    public String getLoginView() {
         return "login";
     }
 
-    @GetMapping("/board")
-    public String getMainView() {
 
-        return "main";
-    }
     @GetMapping(value = "/emailConfirm")
     public String confirmEmail(String userEmail, String key, Model model) {
         memberService.updateAuth(userEmail, key);
