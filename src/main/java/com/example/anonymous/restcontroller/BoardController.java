@@ -45,8 +45,10 @@ public class BoardController {
 
     @PostMapping(value = "/main")
     public ResponseEntity<String> postContent(Board board, Principal principal, HttpSession session) {
+        LOGGER.info("Session 경로 : " + session.getServletContext().getRealPath(""));
+
         board.setMemberEmail(principal.getName());
-        boardService.registerBoardService(board);
+        //boardService.registerBoardService(board,session);
 
         return new ResponseEntity<String>("게시글을 등록하였습니다.",HttpStatus.OK);
     }

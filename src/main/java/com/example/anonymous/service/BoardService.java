@@ -31,7 +31,7 @@ public class BoardService {
     @Autowired
     MemberRepository memberRepository;
 
-    public void registerBoardService(Board boardInfo){
+    public void registerBoardService(Board boardInfo, HttpSession session){
 
         String memberEmail = boardInfo.getMemberEmail();
         String subject = boardInfo.getBoardSubject();
@@ -71,7 +71,7 @@ public class BoardService {
         boardInfo.setViewCnt(0);
         boardInfo.setBoardStatus(0);
 
-        String filePath = ImgUtil.imgUpload(boardInfo.getImgFile(), boardInfo.getFilePath());
+        String filePath = ImgUtil.imgUpload( boardInfo.getImgFile(), boardInfo.getFilePath(),session);
         boardInfo.setFilePath(filePath);
 
         try{

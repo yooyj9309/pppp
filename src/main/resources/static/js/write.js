@@ -9,10 +9,12 @@ $(document).ready(function () {
 
         if(subject == "" || subject ==null){
             alert("제목을 입력해주세요.");
+            return;
         }
 
         if(content == "" || content ==null){
-            alert("제목을 입력해주세요.");
+            alert("세부사항을 입력해주세요.");
+            return;
         }
 
         $.ajax({
@@ -22,9 +24,11 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                alert("게시에 성공하였습니다.");
+                alert(response);
                 getBoardList();
-                //$("#savePostsModal").hide();
+                document.getElementById("imgFile").value = "";
+                document.getElementById("writeSubject").value = "";
+                document.getElementById("writeContent").value = "";
             },
             error: function (response) {
                 alert(response.responseText);
@@ -34,25 +38,6 @@ $(document).ready(function () {
     });
 });
 
-function getBoardElement(result) {
-
-    var output = "";
-    output += "<div class=\"card mb-4\">";
-    output += "<img class=\"card-img-top\" src=\"" + result[0].filePath + "\" alt=\"Card image cap\">";
-    output += " <div class=\"card-body\">";
-    output += "<h2 class=\"card-title\">" + result[0].boardSubject + "</h2>";
-    output += "<p class=\"card-text\">" + result[0].boardContents + "</p>";
-    output += " <a href=\"#\" class=\"btn btn-primary\">댓글 보기 (댓글 수) &rarr;</a>";
-    output += " <a href=\"#\" class=\"btn btn-primary\">" + result[0].likeCnt + "</a>";
-    output += " </div>";
-    output += " <div class=\"card-footer text-muted\">";
-    output += " <label>" + result[0].memberNick + "</label> <label>" + dateFormat(result[0].boardRegDate) + "</label>";
-    output += " </div>";
-    output += " </div>";
-
-    $("#boardElement").html(output);
-
-}
 
 function getBoardList() {
     $.ajax({
@@ -67,11 +52,11 @@ function getBoardList() {
                 output += " <div class=\"card-body\">";
                 output += "<h2 class=\"card-title\">" + result[i].boardSubject + "</h2>";
                 output += "<p class=\"card-text\">" + result[i].boardContents + "</p>";
-                output += " <a href=\"#\" class=\"btn btn-primary\">댓글 보기 (댓글 수) &rarr;</a>";
+                output += " <a href=\"#\" class=\"btn btn-primary\">상세보기</a>";
                 output += " <a href=\"#\" class=\"btn btn-primary\">" + result[i].likeCnt + "</a>";
                 output += " </div>";
                 output += " <div class=\"card-footer text-muted\">";
-                output += " <label>" + result[i].memberNick + "</label> <label>" + dateFormat(result[i].boardRegDate) + "</label>";
+                output += " <label>" + result[i].memberNick + "</label> <label>" +result[i].boardRegDate + "</label>";
                 output += " </div>";
                 output += " </div>";
             }
@@ -84,7 +69,7 @@ function getBoardList() {
 }
 
 function dateFormat(date) {
-    date = new Date(parseInt(date));
+    date = new Date();
     year = date.getFullYear();
     month = date.getMonth();
     day = date.getDate();
