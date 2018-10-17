@@ -67,21 +67,8 @@
             <h1 class="my-4">Page Heading
                 <small>[[${#httpServletRequest.remoteUser}]]</small> <!-- 이렇게 하면 세션 아이디를 볼수 있음-->
             </h1>
-
-            <!-- Blog Post -->
-            <div  th:each ="board : ${boardList}" class="card mb-4">
-                <img class="card-img-top"  th:src="${board.filePath}" alt="Card image cap">
-                <div class="card-body">
-                    <h2 class="card-title" th:text = "${board.boardSubject}"></h2>
-                    <p class="card-text"  th:text = "${board.boardContents}"></p>
-                    <a href="#" class="btn btn-primary">댓글 보기 (댓글 수) &rarr;</a>
-                    <a href="#" class="btn btn-primary" th:text = "${board.likeCnt}">&rarr;</a>
-                </div>
-                <div class="card-footer text-muted">
-                    <label th:text = "${board.memberNick}"></label> <label th:text = "${#dates.format(board.boardRegDate, 'yyyy/MM/dd')}"></label>
-                </div>
-            </div>
-
+            <div id="boardElement"></div>
+            <div id = "boardList"></div>
 
             <!-- Pagination -->
             <ul class="pagination justify-content-center mb-4">
@@ -118,11 +105,11 @@
                     </div>
                     <div class="form-group">
                         <label for="writeSubject">제목</label>
-                        <input type="text" class="form-control" name = "boardSubject" id="writeSubject" placeholder="제목을 입력하세요" required = "true">
+                        <input type="text" class="form-control" name = "boardSubject" id="writeSubject" placeholder="제목을 입력하세요" required = "true" maxlength="500">
                     </div>
                     <div class="form-group">
                         <label for="writeContent"> 내용 </label>
-                        <textarea class="form-control" name = "boardContents" id="writeContent" placeholder="내용을 입력하세요" required = "true"></textarea>
+                        <textarea class="form-control" name = "boardContents" id="writeContent" placeholder="내용을 입력하세요" required = "true" maxlength="2000"></textarea>
                     </div>
                 </form>
             </div>

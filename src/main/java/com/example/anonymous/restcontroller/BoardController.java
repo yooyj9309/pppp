@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -37,16 +38,20 @@ public class BoardController {
     @GetMapping("/main")
     public ModelAndView getMainView() {
         ModelAndView mav = new ModelAndView();
-        List<Board> boardList = boardService.getBoardList();
         mav.setViewName("main");
-        mav.addObject("boardList",boardList);
         return mav;
     }
+    @GetMapping(value = "/boardList")
+    public List<Board> getBoardList() {
+        List<Board> boardList = boardService.getBoardList();
+        return boardList;
+    }
+
     @PostMapping(value = "/main")
     public ResponseEntity<String> postContent(Board board, Principal principal, HttpSession session) {
         board.setMemberEmail(principal.getName());
-        boardService.registerBoardService(board,session);
-        LOGGER.info(board.toString());
-        return new ResponseEntity<String>("통신 완료", HttpStatus.OK);
+        boardService.registerBoardService(board);
+
+        return new ResponseEntity<String>("게시글을 등록하였습니다.",HttpStatus.OK);
     }
 }

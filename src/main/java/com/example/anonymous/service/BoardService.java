@@ -31,13 +31,12 @@ public class BoardService {
     @Autowired
     MemberRepository memberRepository;
 
-    public void registerBoardService(Board boardInfo, HttpSession session){
+    public void registerBoardService(Board boardInfo){
 
         String memberEmail = boardInfo.getMemberEmail();
         String subject = boardInfo.getBoardSubject();
         String contents = boardInfo.getBoardContents();
         String fileName = boardInfo.getImgFile().getOriginalFilename();
-        String savePath = "images";
         String memberNick = null;
 
         Member member = null;
@@ -72,13 +71,13 @@ public class BoardService {
         boardInfo.setViewCnt(0);
         boardInfo.setBoardStatus(0);
 
-        String imgPath = ImgUtil.imgUpload(savePath, session, boardInfo.getImgFile(), boardInfo.getFilePath());
-        boardInfo.setFilePath(imgPath);
+        String filePath = ImgUtil.imgUpload(boardInfo.getImgFile(), boardInfo.getFilePath());
+        boardInfo.setFilePath(filePath);
 
         try{
             boardRepository.save(boardInfo);
         }catch (DataAccessException e){
-            deletePhoto(imgPath);
+            deletePhoto(filePath);
             throw new ServerException("게시글 작성중 문제가 발생했습니다.");
         }
     }
@@ -106,6 +105,7 @@ public class BoardService {
             result = true;
         return result;
     }
+
 
     public List<Board> getBoardList(){
         return boardRepository.findAll();
