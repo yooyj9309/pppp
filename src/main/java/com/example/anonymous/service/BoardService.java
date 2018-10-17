@@ -71,7 +71,7 @@ public class BoardService {
         boardInfo.setViewCnt(0);
         boardInfo.setBoardStatus(0);
 
-        String filePath = ImgUtil.imgUpload( boardInfo.getImgFile(), boardInfo.getFilePath(),session);
+        String filePath = ImgUtil.imgUpload("images", session, boardInfo.getImgFile(), boardInfo.getFilePath());
         boardInfo.setFilePath(filePath);
 
         try{

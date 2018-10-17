@@ -48,7 +48,7 @@ public class BoardController {
         LOGGER.info("Session 경로 : " + session.getServletContext().getRealPath(""));
 
         board.setMemberEmail(principal.getName());
-        //boardService.registerBoardService(board,session);
+        boardService.registerBoardService(board,session);
 
         return new ResponseEntity<String>("게시글을 등록하였습니다.",HttpStatus.OK);
     }

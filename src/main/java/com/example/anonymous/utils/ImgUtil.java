@@ -2,7 +2,6 @@ package com.example.anonymous.utils;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 
 import com.example.anonymous.exception.ServerException;
@@ -15,14 +14,13 @@ import javax.servlet.http.HttpSession;
 
 
 public class ImgUtil {
-    private static final String basicFilePath = "../default_image.png";
-    private static final String UPLOAD_FOLDER = "C:\\Users\\yooyj9309\\Desktop\\images";
+    final static String basicImgPath = "../images/default_image.png";
     private static final Logger LOGGER = LoggerFactory.getLogger(ImgUtil.class);
 
     public static String getRealPath(String savePath, HttpSession session) {
-        String sessionFolder = session.getServletContext().getRealPath(savePath);
-        LOGGER.info(sessionFolder);
-        return sessionFolder;
+
+        String realPath = session.getServletContext().getRealPath(savePath);
+        return realPath;
     }
 
     public static void makeFolder(String path) {
@@ -30,35 +28,51 @@ public class ImgUtil {
         file.mkdirs();
     }
 
-    public static String imgUpload(MultipartFile inputFile, String savedFilePath, HttpSession session) {
-        String currentFilePath = basicFilePath;
-        String sessionFolder= getRealPath("../images",session);
-        String fileName = inputFile.getOriginalFilename();
-        MultipartFile savedFile = inputFile;
+    public static String renameTo(String path, String name) {
 
-        UUID uuid = UUID.randomUUID();
+        makeFolder(path);
 
-        if(!StringUtils.isEmpty(fileName)) {
-            currentFilePath = uuid.toString()+"_"+fileName;
-            makeFolder(sessionFolder);
+        String fileName = name;
+        File file = new File(path, fileName);
 
-            File file = new File(UPLOAD_FOLDER,currentFilePath);
-            File tmpFile = new File(sessionFolder,currentFilePath);
-
-            try {
-                //inputFile.transferTo(file);
-                savedFile.transferTo(tmpFile);
-            } catch (IOException e) {
-                throw new ServerException("서버 에러입니다.");
-            }
-        }else{
-            if(!StringUtils.isEmpty(savedFilePath)){
-                currentFilePath = savedFilePath;
-            }
+        //UUID를 하더라도 중복이 존재할 수 있으므로
+        while (file.exists()) {
+            UUID uuid = UUID.randomUUID();
+            fileName = uuid.toString() + "_" + fileName;
+            file = new File(path, fileName);
         }
-        LOGGER.info(currentFilePath);
-        return "../images/"+currentFilePath;
+        return fileName;
     }
 
+    public static String imgUpload(String savePath, HttpSession session, MultipartFile inputFile, String filePath) {
+        String imgPath = "";
+        try {
+            String realPath = ImgUtil.getRealPath(savePath, session);
+            String imageFileName = inputFile.getOriginalFilename();
+            String saveName = "";
+
+            if (!StringUtils.isEmpty(imageFileName)) {
+                saveName = ImgUtil.renameTo(realPath, imageFileName);
+                try {
+                    File file = new File(realPath, saveName);
+                    inputFile.transferTo(file);
+                    imgPath = "../" + savePath + "/" + saveName;
+
+                    LOGGER.info("이미지 업로드 성공");
+                } catch (Exception e) {
+                    throw new ServerException("서버 에러입니다.");
+                }
+            } else {
+                if (!StringUtils.isEmpty(filePath)) {
+                    imgPath = filePath;
+                } else {
+                    imgPath = basicImgPath;
+                }
+            }
+        } catch (Exception e) {
+            imgPath = basicImgPath;
+        }
+        return imgPath;
+    }
 
 }
