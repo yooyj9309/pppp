@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -35,12 +36,7 @@ public class BoardController {
     @Autowired
     BoardService boardService;
 
-    @GetMapping("/main")
-    public ModelAndView getMainView() {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("main");
-        return mav;
-    }
+
     @GetMapping(value = "/boardList")
     public List<Board> getBoardList() {
         List<Board> boardList = boardService.getBoardList();
