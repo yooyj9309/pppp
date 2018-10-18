@@ -17,12 +17,22 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.security.Principal;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class BoardService {
+
+    private static final int CREATED_BOARD = 0;
+    private static final int UPDATED_BOARD = 1;
+    private static final int DELETED_BOARD = 2;
+
+    private static final int INITIAL_NUM = 0;
+
+    private static final int SUBJECT_MAX_LENGTH = 500;
+    private static final int CONTENT_MAX_LENGTH = 2000;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BoardService.class);
     @Autowired
@@ -47,13 +57,13 @@ public class BoardService {
         if (StringUtils.isEmpty(subject)) {
             throw new InvalidInputException("제목을 적어주세요.");
         }
-        if(subject.length() > 500){
+        if(subject.length() > SUBJECT_MAX_LENGTH){
             throw new InvalidInputException("제목이 너무 깁니다.");
         }
         if (StringUtils.isEmpty(contents)) {
             throw new InvalidInputException("세부사항을 입력해주세요.");
         }
-        if(subject.length() > 2000){
+        if(subject.length() > CONTENT_MAX_LENGTH){
             throw new InvalidInputException("글이 너무 깁니다.");
         }
         if(!isPhotoFile(fileName)){
@@ -67,9 +77,9 @@ public class BoardService {
         memberNick = member.getMemberNick();
 
         boardInfo.setMemberNick(memberNick);
-        boardInfo.setLikeCnt(0);
-        boardInfo.setViewCnt(0);
-        boardInfo.setBoardStatus(0);
+        boardInfo.setLikeCnt(INITIAL_NUM);
+        boardInfo.setViewCnt(INITIAL_NUM);
+        boardInfo.setBoardStatus(CREATED_BOARD);
 
         String filePath = ImgUtil.imgUpload("images", session, boardInfo.getImgFile(), boardInfo.getFilePath());
         boardInfo.setFilePath(filePath);
@@ -118,5 +128,58 @@ public class BoardService {
 
     public List<Board> getBoardList(){
         return boardRepository.findAll();
+    }
+
+    public void updateBoardById(Long boardId, Board inputBoard, HttpSession session){
+        String sessionEmail = inputBoard.getMemberEmail();
+        String subject = inputBoard.getBoardSubject();
+        String contents = inputBoard.getBoardContents();
+        String fileName = inputBoard.getImgFile().getOriginalFilename();
+
+        Member member = null;
+
+        if(StringUtils.isEmpty(sessionEmail)){
+            throw new NoAuthException("게시글 작성할 권한이 없습니다.");
+        }
+        if (StringUtils.isEmpty(subject)) {
+            throw new InvalidInputException("제목을 적어주세요.");
+        }
+        if(subject.length() > SUBJECT_MAX_LENGTH){
+            throw new InvalidInputException("제목이 너무 깁니다.");
+        }
+        if (StringUtils.isEmpty(contents)) {
+            throw new InvalidInputException("세부사항을 입력해주세요.");
+        }
+        if(subject.length() > CONTENT_MAX_LENGTH){
+            throw new InvalidInputException("글이 너무 깁니다.");
+        }
+        if(!isPhotoFile(fileName)){
+            throw new InvalidInputException("사진만 입력해주세요.");
+        }
+        member = memberRepository.findMemberByMemberEmail(inputBoard.getMemberEmail());
+
+        if(member == null){
+            throw new NoAuthException("게시글 작성할 권한이 없습니다.");
+        }
+
+        //수정하기전 게시판 정보
+        Board updatedBoard = boardRepository.findBoardByBoardId(boardId);
+        // 0: 생성됨 1: 업데이트 2:삭제
+        updatedBoard.setBoardStatus(UPDATED_BOARD);
+        updatedBoard.setBoardSubject(subject);
+        updatedBoard.setBoardContents(contents);
+
+        String filePath = null;
+
+        if(!StringUtils.isEmpty(fileName)){
+            filePath = ImgUtil.imgUpload("images", session, inputBoard.getImgFile(), fileName);
+            updatedBoard.setFilePath(filePath);
+        }
+        try{
+            boardRepository.save(updatedBoard);
+        }catch (DataAccessException e){
+            deletePhoto(fileName);
+            throw new ServerException("게시글 작성중 문제가 발생했습니다.");
+        }
     }
 }

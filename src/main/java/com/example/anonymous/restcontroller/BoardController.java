@@ -61,4 +61,14 @@ public class BoardController {
 
         return mav;
     }
+
+    @PostMapping(value = "main/{boardId}")
+    public ResponseEntity<String> updateBoard(@PathVariable("boardId") Long boardId, Board updatedBoard, Principal principal, HttpSession session) {
+        LOGGER.info(boardId+"번 게시판 수정하기");
+        LOGGER.info(updatedBoard.toString());
+
+        updatedBoard.setMemberEmail(principal.getName());
+        boardService.updateBoardById(boardId,updatedBoard,session);
+        return new ResponseEntity<String>("게시글을 수정하였습니다.",HttpStatus.OK);
+    }
 }

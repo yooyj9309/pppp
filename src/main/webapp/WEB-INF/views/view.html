@@ -31,7 +31,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Home
+                    <a class="nav-link" href="../main">Home
                         <span class="sr-only">(current)</span>
                     </a>
                 </li>
@@ -58,24 +58,31 @@
         <!-- Blog Entries Column -->
         <div class="col-md-8">
             <h1 class="my-4" th:text = "${board.boardSubject}"></h1>
+            <input type="hidden" th:value = "${board.boardId}" id = "boardId"/>
             <div class="col-lg-4">
-                <a class="btn btn-primary btn-lg" id = "updateButton">수정</a>
+                <a class="btn btn-primary btn-lg" id = "updateButton" data-toggle="modal" data-target="#\updatingModal">수정</a>
                 <a class="btn btn-primary btn-lg" id = "deleteButton">삭제</a>
             </div>
             <div class="row my-4">
                 <div class="col-lg-8">
                     <img class="img-fluid rounded" th:src="${board.filePath}" alt="">
                 </div>
-                <!-- /.col-lg-8 -->
                 <div class="col-lg-4">
-                    <p th:text = "${board.boardContents}"></p>
+
+                    <textarea style="resize:none;overflow:auto" th:text = "${board.boardContents}" readonly="readonly" cols="70" rows="12" ></textarea>
                 </div>
-                <!-- /.col-md-4 -->
             </div>
+            작성자 : <label th:text="${board.memberNick}"></label>
+            <p th:switch="${board.boardStatus}">
+                <label th:case = "0">생성 일 : <label th:text="${#dates.format(board.boardModDate, 'yyyy/MM/dd')}"></label></label>
+                <label th:case = "1">수정 일 : <label th:text="${#dates.format(board.boardModDate, 'yyyy/MM/dd')}"></label></label>
+            </p>
         </div>
+
+
     </div>
 </div>
-</div>
+
 <!-- /.modal -->
 <div class="modal fade" id="savePostsModal" tabindex="-1" role="dialog" aria-labelledby="savePostsLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -135,17 +142,45 @@
         </div>
     </div>
 </div>
-<!-- Footer -->
-<footer class="py-5 bg-dark">
-    <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2018</p>
+
+<div class="modal fade" id="updatingModal" tabindex="-1" role="dialog" aria-labelledby="savePostsLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updating">게시글 수정</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id = "updateForm" th:action = "@{/${board.boardId}}" encType="multipart/form-data">
+                    <div class="form-group">
+                        <label for="imgFile">이미지</label>
+                        <input type="file" class="form-control" name="imgFile" id="updateImgFile" placeholder = "사진 수정 하기">
+                    </div>
+                    <div class="form-group">
+                        <label for="writeSubject">제목</label>
+                        <input type="text" class="form-control" th:value = "${board.boardSubject}" name = "boardSubject" id="updateSubject" placeholder="제목을 입력하세요" required = "true" maxlength="500">
+                    </div>
+                    <div class="form-group">
+                        <label for="writeContent"> 내용 </label>
+                        <textarea class="form-control" name = "boardContents" th:text = "${board.boardContents}" id="updateContent" placeholder="내용을 입력하세요" required = "true" maxlength="2000"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnUpdate">수정</button>
+            </div>
+        </div>
     </div>
-    <!-- /.container -->
-</footer>
+</div>
+
 
 <!-- Bootstrap core JavaScript -->
 <script src="../vendor/jquery/jquery.min.js"></script>
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../js/update.js"></script>
 <script th:inline="javascript">
     $(document).ready(function () {
         var session = /*[[${#httpServletRequest.remoteUser}]]*/;
