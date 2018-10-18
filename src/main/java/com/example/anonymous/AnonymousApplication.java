@@ -1,5 +1,6 @@
 package com.example.anonymous;
 
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -36,12 +37,10 @@ public class AnonymousApplication {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
         templateEngine.setEnableSpringELCompiler(true); // Spring EL 사용
+        templateEngine.addDialect(new LayoutDialect());
 
         return templateEngine;
-
     }
-
-
 
     @Bean
     public ThymeleafViewResolver viewResolver(){

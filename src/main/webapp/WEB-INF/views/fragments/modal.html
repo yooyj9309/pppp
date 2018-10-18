@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<section th:fragment="modal">
+    <div class="modal fade" id="savePostsModal" tabindex="-1" role="dialog" aria-labelledby="savePostsLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="posting">게시글 등록</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id = "writeForm" encType="multipart/form-data">
+                        <div class="form-group">
+                            <label for="imgFile">이미지</label>
+                            <input type="file" class="form-control" name="imgFile" id="imgFile" placeholder = "사진 업로드 하기">
+                        </div>
+                        <div class="form-group">
+                            <label for="writeSubject">제목</label>
+                            <input type="text" class="form-control" name = "boardSubject" id="writeSubject" placeholder="제목을 입력하세요" required = "true" maxlength="500">
+                        </div>
+                        <div class="form-group">
+                            <label for="writeContent"> 내용 </label>
+                            <textarea class="form-control" name = "boardContents" id="writeContent" placeholder="내용을 입력하세요" required = "true" maxlength="2000"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnWrite">등록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="changeNick" tabindex="-1" role="dialog" aria-labelledby="savePostsLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="savePostsLabel">닉네임 수정</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="title">변경할 닉네임</label>
+                            <input type="text" class="form-control" id="title" placeholder="변경하실 닉네임을 작성하세요.">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary"  data-dismiss="modal" id="btn-save">등록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
