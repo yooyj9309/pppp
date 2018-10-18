@@ -1,9 +1,10 @@
  $(document).ready(function () {
+     var boardId = $("#boardId").val();
+
      $("#btnUpdate").click(function() {
          var formData = new FormData($("#updateForm")[0]);
          var subject = $("#updateSubject").val();
          var content = $("#updateContent").val();
-         var boardId = $("#boardId").val();
 
          console.log(boardId);
 
@@ -30,5 +31,21 @@
                  alert(response.responseText);
              }
          });
+     });
+
+     $("#btnDelete").click(function() {
+        if(confirm("게시글을 삭제하시겠습니까?")){
+            $.ajax({
+                type : "delete",
+                url : boardId,
+                success : function(response) {
+                    alert(response);
+                    location.href="/main";
+                },
+                error : function(response) {
+                    alert(response.responseText);
+                }
+            });
+        }
      });
  });
