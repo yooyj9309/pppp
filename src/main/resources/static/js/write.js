@@ -46,13 +46,18 @@ function getBoardList() {
         success: function (result) {
             console.log(result);
             var output = "";
+
             for (var i in result) {
                 output += "<div class=\"card mb-4\">";
-                output += "<img class=\"card-img-top\" src=\"" + result[i].filePath + "\" alt=\"Card image cap\">";
+                output += "<a href = \"main/"+result[i].boardId+"\">";
+                output += "<img class=\"card-img-top\" src=\"" + result[i].filePath + "\" alt=\"이미지 로딩 중...\">";
+                output += "</a>";
                 output += " <div class=\"card-body\">";
-                output += "<h2 class=\"card-title\">" + result[i].boardSubject + "</h2>";
+                output += "<a href = \"main/"+result[i].boardId+"\">";
+                output += "<h2 class=\"card-title\">" + result[i].boardSubject +"</h2>";
+                output += "</a>";
                 output += "<p class=\"card-text\">" + result[i].boardContents + "</p>";
-                output += " <a href=\"#\" class=\"btn btn-primary\">상세보기</a>";
+                output += " <a href=\""+result[i].boardId+"\" class=\"btn btn-primary\">상세보기</a>";
                 output += " <a href=\"#\" class=\"btn btn-primary\">" + result[i].likeCnt + "</a>";
                 output += " </div>";
                 output += " <div class=\"card-footer text-muted\">";
@@ -66,17 +71,4 @@ function getBoardList() {
             alert(response.responseText);
         }
     });
-}
-
-function dateFormat(date) {
-    date = new Date();
-    year = date.getFullYear();
-    month = date.getMonth();
-    day = date.getDate();
-    hour = date.getHours();
-    minute = date.getMinutes();
-    second = date.getSeconds();
-
-    formatDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-    return formatDate;
 }
