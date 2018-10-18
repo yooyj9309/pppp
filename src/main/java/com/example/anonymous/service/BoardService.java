@@ -106,6 +106,15 @@ public class BoardService {
         return result;
     }
 
+    public Board getBoardById(Long boardId){
+
+        Board board = boardRepository.findBoardByBoardId(boardId);
+        Member member = memberRepository.findMemberByMemberNick(board.getMemberNick());
+        LOGGER.info(member.toString());
+        board.setMemberEmail(member.getMemberEmail());
+
+        return board;
+    }
 
     public List<Board> getBoardList(){
         return boardRepository.findAll();

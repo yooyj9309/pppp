@@ -32,12 +32,10 @@ $(document).ready(function () {
             },
             error: function (response) {
                 alert(response.responseText);
-              //  $("#savePostsModal").hide();
             }
         });
     });
 });
-
 
 function getBoardList() {
     $.ajax({

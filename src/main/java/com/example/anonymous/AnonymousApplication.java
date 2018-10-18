@@ -37,7 +37,6 @@ public class AnonymousApplication {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
         templateEngine.setEnableSpringELCompiler(true); // Spring EL 사용
-        templateEngine.addDialect(new LayoutDialect());
 
         return templateEngine;
     }

@@ -14,10 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -36,7 +33,6 @@ public class BoardController {
     @Autowired
     BoardService boardService;
 
-
     @GetMapping(value = "/boardList")
     public List<Board> getBoardList() {
         List<Board> boardList = boardService.getBoardList();
@@ -51,5 +47,18 @@ public class BoardController {
         boardService.registerBoardService(board,session);
 
         return new ResponseEntity<String>("게시글을 등록하였습니다.",HttpStatus.OK);
+    }
+
+    @GetMapping(value = "main/{boardId}")
+    public ModelAndView getDetailView(@PathVariable("boardId") Long boardId) {
+        LOGGER.info(boardId+"번 게시판 상세보기");
+
+        ModelAndView mav = new ModelAndView();
+        Board board = boardService.getBoardById(boardId);
+        LOGGER.info(board.toString());
+        mav.setViewName("view");
+        mav.addObject("board",board);
+
+        return mav;
     }
 }
