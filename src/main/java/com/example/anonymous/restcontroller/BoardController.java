@@ -71,4 +71,12 @@ public class BoardController {
         boardService.updateBoardById(boardId,updatedBoard,session);
         return new ResponseEntity<String>("게시글을 수정하였습니다.",HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "main/{boardId}")
+    public ResponseEntity<String> deleteBoard(@PathVariable("boardId") Long boardId) {
+        LOGGER.info(boardId+"번 게시판 삭제하기");
+        boardService.deleteBoardById(boardId);
+
+        return new ResponseEntity<java.lang.String>("게시글을 삭제하였습니다.",HttpStatus.OK);
+    }
 }

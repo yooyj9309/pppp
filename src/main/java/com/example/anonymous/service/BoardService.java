@@ -182,4 +182,14 @@ public class BoardService {
             throw new ServerException("게시글 작성중 문제가 발생했습니다.");
         }
     }
+
+    public void deleteBoardById(Long boardId){
+        try {
+            Board board = boardRepository.findBoardByBoardId(boardId);
+            board.setBoardStatus(DELETED_BOARD);
+            boardRepository.save(board);
+        }catch (DataAccessException e){
+            throw new ServerException("게시 글 삭제 중 문제가 발생");
+        }
+    }
 }
