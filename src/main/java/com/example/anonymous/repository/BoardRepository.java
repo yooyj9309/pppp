@@ -13,4 +13,6 @@ public interface BoardRepository extends PagingAndSortingRepository<Board, Long>
     List<Board> findAllByBoardStatusLessThan(int boardStatus, Pageable request);
 
     List<Board> findAllByBoardStatusLessThanAndBoardIdLessThan(int boardStatus, long boardId, Pageable request);
+
+    List<Board> findAllByBoardStatusLessThanAndBoardIdGreaterThan(int boardStatus, long boardId, Pageable request);
 }

@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.security.Principal;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +34,7 @@ public class BoardService {
 
     private static final int INITIAL_NUM = 0;
 
+    private static final int ONE_PAGE_SIZE = 5;
     private static final int SUBJECT_MAX_LENGTH = 500;
     private static final int CONTENT_MAX_LENGTH = 2000;
 
@@ -43,7 +45,7 @@ public class BoardService {
     @Autowired
     MemberRepository memberRepository;
 
-    public void registerBoardService(Board boardInfo, HttpSession session){
+    public void registerBoardService(Board boardInfo, HttpSession session) {
 
         String memberEmail = boardInfo.getMemberEmail();
         String subject = boardInfo.getBoardSubject();
@@ -53,27 +55,27 @@ public class BoardService {
 
         Member member = null;
 
-        if(StringUtils.isEmpty(memberEmail)){
+        if (StringUtils.isEmpty(memberEmail)) {
             throw new NoAuthException("게시글 작성할 권한이 없습니다.");
         }
         if (StringUtils.isEmpty(subject)) {
             throw new InvalidInputException("제목을 적어주세요.");
         }
-        if(subject.length() > SUBJECT_MAX_LENGTH){
+        if (subject.length() > SUBJECT_MAX_LENGTH) {
             throw new InvalidInputException("제목이 너무 깁니다.");
         }
         if (StringUtils.isEmpty(contents)) {
             throw new InvalidInputException("세부사항을 입력해주세요.");
         }
-        if(subject.length() > CONTENT_MAX_LENGTH){
+        if (subject.length() > CONTENT_MAX_LENGTH) {
             throw new InvalidInputException("글이 너무 깁니다.");
         }
-        if(!isPhotoFile(fileName)){
+        if (!isPhotoFile(fileName)) {
             throw new InvalidInputException("사진만 입력해주세요.");
         }
         member = memberRepository.findMemberByMemberEmail(boardInfo.getMemberEmail());
 
-        if(member == null){
+        if (member == null) {
             throw new NoAuthException("게시글 작성할 권한이 없습니다.");
         }
         memberNick = member.getMemberNick();
@@ -86,13 +88,14 @@ public class BoardService {
         String filePath = ImgUtil.imgUpload("images", session, boardInfo.getImgFile(), boardInfo.getFilePath());
         boardInfo.setFilePath(filePath);
 
-        try{
+        try {
             boardRepository.save(boardInfo);
-        }catch (DataAccessException e){
+        } catch (DataAccessException e) {
             deletePhoto(filePath);
             throw new ServerException("게시글 작성중 문제가 발생했습니다.");
         }
     }
+
     private void deletePhoto(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
@@ -105,6 +108,7 @@ public class BoardService {
             LOGGER.info(filePath + "가 존재하지 않습니다.");
         }
     }
+
     private boolean isPhotoFile(String str) {
         String allowPattern = ".+\\.(jpg|png|JPG|PNG)$";
         boolean result = false;
@@ -118,7 +122,7 @@ public class BoardService {
         return result;
     }
 
-    public Board getBoardById(Long boardId){
+    public Board getBoardById(Long boardId) {
 
         Board board = boardRepository.findBoardByBoardId(boardId);
         Member member = memberRepository.findMemberByMemberNick(board.getMemberNick());
@@ -128,20 +132,28 @@ public class BoardService {
         return board;
     }
 
-    public List<Board> getBoardList(int page, long boardId){
-        Pageable request = new PageRequest(0,3, Sort.Direction.DESC,"boardRegDate");
+    public List<Board> getBoardList(long boardId, String type) {
+        Pageable request = new PageRequest(0, ONE_PAGE_SIZE, Sort.Direction.DESC, "boardRegDate");
         List<Board> responseList = null;
 
-        if(boardId == -1){
-            responseList = boardRepository.findAllByBoardStatusLessThan(DELETED_BOARD,request);
-        }else{
-            responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdLessThan(DELETED_BOARD,boardId,request);
+        //스크롤이 내려가면서 새로운 게시판 리스트를 부를 떄
+        if (type.equals("down")) {
+            if (boardId == -1) { //처음 게시판 리스트를 호출하는 경우
+                responseList = boardRepository.findAllByBoardStatusLessThan(DELETED_BOARD, request);
+            } else {
+                responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdLessThan(DELETED_BOARD, boardId, request);
+            }
+        } else if(type.equals("up")){
+            if(boardId == -1){
+                throw new InvalidInputException("맨 처음 게시판 입니다.");
+            }else{
+                responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdGreaterThan(DELETED_BOARD, boardId, request);
+            }
         }
-
         return responseList;
     }
 
-    public void updateBoardById(Long boardId, Board inputBoard, HttpSession session){
+    public void updateBoardById(Long boardId, Board inputBoard, HttpSession session) {
         String sessionEmail = inputBoard.getMemberEmail();
         String subject = inputBoard.getBoardSubject();
         String contents = inputBoard.getBoardContents();
@@ -149,27 +161,27 @@ public class BoardService {
 
         Member member = null;
 
-        if(StringUtils.isEmpty(sessionEmail)){
+        if (StringUtils.isEmpty(sessionEmail)) {
             throw new NoAuthException("게시글 작성할 권한이 없습니다.");
         }
         if (StringUtils.isEmpty(subject)) {
             throw new InvalidInputException("제목을 적어주세요.");
         }
-        if(subject.length() > SUBJECT_MAX_LENGTH){
+        if (subject.length() > SUBJECT_MAX_LENGTH) {
             throw new InvalidInputException("제목이 너무 깁니다.");
         }
         if (StringUtils.isEmpty(contents)) {
             throw new InvalidInputException("세부사항을 입력해주세요.");
         }
-        if(subject.length() > CONTENT_MAX_LENGTH){
+        if (subject.length() > CONTENT_MAX_LENGTH) {
             throw new InvalidInputException("글이 너무 깁니다.");
         }
-        if(!isPhotoFile(fileName)){
+        if (!isPhotoFile(fileName)) {
             throw new InvalidInputException("사진만 입력해주세요.");
         }
         member = memberRepository.findMemberByMemberEmail(inputBoard.getMemberEmail());
 
-        if(member == null){
+        if (member == null) {
             throw new NoAuthException("게시글 작성할 권한이 없습니다.");
         }
 
@@ -182,24 +194,33 @@ public class BoardService {
 
         String filePath = null;
 
-        if(!StringUtils.isEmpty(fileName)){
+        if (!StringUtils.isEmpty(fileName)) {
             filePath = ImgUtil.imgUpload("images", session, inputBoard.getImgFile(), fileName);
             updatedBoard.setFilePath(filePath);
         }
-        try{
+        try {
             boardRepository.save(updatedBoard);
-        }catch (DataAccessException e){
+        } catch (DataAccessException e) {
             deletePhoto(fileName);
             throw new ServerException("게시글 작성중 문제가 발생했습니다.");
         }
     }
 
-    public void deleteBoardById(Long boardId){
+    public void deleteBoardById(Long boardId, Principal principal) {
+        Board deletedBoard = boardRepository.findBoardByBoardId(boardId);
+        String authorNick = deletedBoard.getMemberNick();
+
+        Member accessMember = memberRepository.findMemberByMemberEmail(principal.getName());
+        String accessMemberNick = accessMember.getMemberNick();
+
+        if (!authorNick.equals(accessMemberNick)) {
+            throw new NoAuthException("삭제하실 권한이 없습니다.");
+        }
+
         try {
-            Board board = boardRepository.findBoardByBoardId(boardId);
-            board.setBoardStatus(DELETED_BOARD);
-            boardRepository.save(board);
-        }catch (DataAccessException e){
+            deletedBoard.setBoardStatus(DELETED_BOARD);
+            boardRepository.save(deletedBoard);
+        } catch (DataAccessException e) {
             throw new ServerException("게시 글 삭제 중 문제가 발생");
         }
     }

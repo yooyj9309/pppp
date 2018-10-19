@@ -27,10 +27,10 @@ public class BoardController {
     BoardService boardService;
 
     @GetMapping(value = "/boardList")
-    public List<Board> getBoardList(@RequestParam("page") int page, @RequestParam("boardId") long boardId) {
-        LOGGER.info(page+ " "+boardId+" 요청");
+    public List<Board> getBoardList(@RequestParam("boardId") long boardId, @RequestParam("type") String type) {
+        LOGGER.info(boardId+" 요청");
 
-        List<Board> boardList = boardService.getBoardList(page,boardId);
+        List<Board> boardList = boardService.getBoardList(boardId,type);
         return boardList;
     }
 
@@ -68,10 +68,10 @@ public class BoardController {
     }
 
     @DeleteMapping(value = "main/{boardId}")
-    public ResponseEntity<String> deleteBoard(@PathVariable("boardId") Long boardId) {
+    public ResponseEntity<String> deleteBoard(@PathVariable("boardId") Long boardId, Principal principal) {
         LOGGER.info(boardId+"번 게시판 삭제하기");
-        boardService.deleteBoardById(boardId);
+        boardService.deleteBoardById(boardId,principal);
 
-        return new ResponseEntity<java.lang.String>("게시글을 삭제하였습니다.",HttpStatus.OK);
+        return new ResponseEntity<String>("게시글을 삭제하였습니다.",HttpStatus.OK);
     }
 }
