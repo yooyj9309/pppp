@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -125,8 +128,17 @@ public class BoardService {
         return board;
     }
 
-    public List<Board> getBoardList(){
-        return boardRepository.findAll();
+    public List<Board> getBoardList(int page, long boardId){
+        Pageable request = new PageRequest(0,3, Sort.Direction.DESC,"boardRegDate");
+        List<Board> responseList = null;
+
+        if(boardId == -1){
+            responseList = boardRepository.findAllByBoardStatusLessThan(DELETED_BOARD,request);
+        }else{
+            responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdLessThan(DELETED_BOARD,boardId,request);
+        }
+
+        return responseList;
     }
 
     public void updateBoardById(Long boardId, Board inputBoard, HttpSession session){

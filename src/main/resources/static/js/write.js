@@ -1,7 +1,9 @@
 $(document).ready(function () {
-    var page = 1;
+    var page = 0;
+    var lastBoard = -1; //어느 board까지 받았는지 확인 하는 변수
+    var firstBoard = -1;
 
-    getBoardList(1);
+    getBoardList(page);
 
     $(window).scroll(function() {
         if ($(window).scrollTop() == $(document).height() - $(window).height()) {
@@ -34,48 +36,53 @@ $(document).ready(function () {
             contentType: false,
             success: function (response) {
                 alert(response);
-                getBoardList();
-                document.getElementById("imgFile").value = "";
-                document.getElementById("writeSubject").value = "";
-                document.getElementById("writeContent").value = "";
+                location.href="/main"
             },
             error: function (response) {
                 alert(response.responseText);
             }
         });
     });
+
+    function getBoardList(page) {
+        console.log(lastBoard);
+
+            $.ajax({
+                type: "get",
+                url: "boardList/?page="+page+"&boardId="+lastBoard,
+                success: function (result) {
+                    console.log(result);
+                    if(result.length!=0) {
+                        var output = "";
+
+                        for (var i in result) {
+                            output += "<div class=\"card mb-4\">";
+                            output += "<a href = \"main/" + result[i].boardId + "\">";
+                            output += "<img class=\"card-img-top\" src=\"" + result[i].filePath + "\" alt=\"이미지 로딩 중...\">";
+                            output += "</a>";
+                            output += " <div class=\"card-body\">";
+                            output += "<a href = \"main/" + result[i].boardId + "\">";
+                            output += "<h2 class=\"card-title\">" + result[i].boardSubject + "</h2>";
+                            output += "</a>";
+                            output += "<p class=\"card-text\">" + result[i].boardContents + "</p>";
+                            output += " <a href=\"" + result[i].boardId + "\" class=\"btn btn-primary\">상세보기</a>";
+                            output += " <a href=\"#\" class=\"btn btn-primary\">" + result[i].likeCnt + "</a>";
+                            output += " </div>";
+                            output += " <div class=\"card-footer text-muted\">";
+                            output += " <label>" + result[i].memberNick + "</label> <label>" + result.boardRegDate + "</label>";
+                            output += " </div>";
+                            output += " </div>";
+                        }
+                        $("#boardList").append(output);
+                        lastBoard = result[result.length - 1].boardId;
+                    }
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+    }
 });
 
-function getBoardList(page) {
-    $.ajax({
-        type: "get",
-        url: "boardList/"+page,
-        success: function (result) {
-            console.log(result);
-            var output = "";
+//처음 main page에 보여줄 10개의 리스트를 가져오는 함수
 
-            for (var i in result) {
-                output += "<div class=\"card mb-4\">";
-                output += "<a href = \"main/"+result[i].boardId+"\">";
-                output += "<img class=\"card-img-top\" src=\"" + result[i].filePath + "\" alt=\"이미지 로딩 중...\">";
-                output += "</a>";
-                output += " <div class=\"card-body\">";
-                output += "<a href = \"main/"+result[i].boardId+"\">";
-                output += "<h2 class=\"card-title\">" + result[i].boardSubject +"</h2>";
-                output += "</a>";
-                output += "<p class=\"card-text\">" + result[i].boardContents + "</p>";
-                output += " <a href=\""+result[i].boardId+"\" class=\"btn btn-primary\">상세보기</a>";
-                output += " <a href=\"#\" class=\"btn btn-primary\">" + result[i].likeCnt + "</a>";
-                output += " </div>";
-                output += " <div class=\"card-footer text-muted\">";
-                output += " <label>" + result[i].memberNick + "</label> <label>" +result[i].boardRegDate + "</label>";
-                output += " </div>";
-                output += " </div>";
-            }
-            $("#boardList").append(output);
-        },
-        error: function (response) {
-            alert(response.responseText);
-        }
-    });
-}

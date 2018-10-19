@@ -26,11 +26,11 @@ public class BoardController {
     @Autowired
     BoardService boardService;
 
-    @GetMapping(value = "/boardList/{page}")
-    public List<Board> getBoardList(@PathVariable("page") int page) {
-        LOGGER.info(page+" 요청");
+    @GetMapping(value = "/boardList")
+    public List<Board> getBoardList(@RequestParam("page") int page, @RequestParam("boardId") long boardId) {
+        LOGGER.info(page+ " "+boardId+" 요청");
 
-        List<Board> boardList = boardService.getBoardList();
+        List<Board> boardList = boardService.getBoardList(page,boardId);
         return boardList;
     }
 
