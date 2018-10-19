@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.security.Principal;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -1,5 +1,14 @@
 $(document).ready(function () {
-    getBoardList();
+    var page = 1;
+
+    getBoardList(1);
+
+    $(window).scroll(function() {
+        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+            console.log(++page);
+            getBoardList(page);
+        }
+    });
 
     $("#btnWrite").click(function () {
         var formData = new FormData($("#writeForm")[0]);
@@ -37,10 +46,10 @@ $(document).ready(function () {
     });
 });
 
-function getBoardList() {
+function getBoardList(page) {
     $.ajax({
         type: "get",
-        url: "boardList",
+        url: "boardList/"+page,
         success: function (result) {
             console.log(result);
             var output = "";
@@ -63,7 +72,7 @@ function getBoardList() {
                 output += " </div>";
                 output += " </div>";
             }
-            $("#boardList").html(output);
+            $("#boardList").append(output);
         },
         error: function (response) {
             alert(response.responseText);
