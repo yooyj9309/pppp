@@ -109,13 +109,21 @@ $(document).ready(function () {
             output += " <a href=\"#\" class=\"btn btn-primary\">" + result[i].likeCnt + "</a>";
             output += " </div>";
             output += " <div class=\"card-footer text-muted\">";
-            output += " <label>" + result[i].memberNick + "</label> <label>" + result[i].boardModDate + "</label>";
+            output += " <label>" +"게시자 : "+ result[i].memberNick + "&nbsp;&nbsp;&nbsp;&nbsp;"+"</label> <label>" +"작성일 : "+timeFormat(result[i].boardModDate) + "</label>";
             output += " </div>";
             output += " </div>";
         }
         return output;
     }
 
+    function timeFormat(date) {
+        console.log(new Date(date));
+
+        date = new Date(date);
+        var strDate = date+"";
+        var boardDate = strDate.split(' ');
+        return boardDate[0]+" "+boardDate[1]+" "+boardDate[2]+" "+boardDate[3]+" "+boardDate[4];
+    }
 });
 
 

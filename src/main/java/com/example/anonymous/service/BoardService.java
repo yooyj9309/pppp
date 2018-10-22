@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +34,8 @@ public class BoardService {
     private static final int DELETED_BOARD = 2;
 
     private static final int INITIAL_NUM = 0;
+
+    private static final int FIRST_BOARD_SIGN = -1;
 
     private static final int ONE_PAGE_SIZE = 5;
     private static final int SUBJECT_MAX_LENGTH = 500;
@@ -84,6 +87,7 @@ public class BoardService {
         boardInfo.setLikeCnt(INITIAL_NUM);
         boardInfo.setViewCnt(INITIAL_NUM);
         boardInfo.setBoardStatus(CREATED_BOARD);
+        boardInfo.setBoardModDate(new Date());
 
         String filePath = ImgUtil.imgUpload("images", session, boardInfo.getImgFile(), boardInfo.getFilePath());
         boardInfo.setFilePath(filePath);
@@ -132,19 +136,18 @@ public class BoardService {
         return board;
     }
 
-    public List<Board> getBoardList(long boardId, String type) {
+    public List<Board> getBoardList(long boardId, String scrollingType) {
         Pageable request = new PageRequest(0, ONE_PAGE_SIZE, Sort.Direction.DESC, "boardRegDate");
         List<Board> responseList = null;
 
-        //스크롤이 내려가면서 새로운 게시판 리스트를 부를 떄
-        if (type.equals("down")) {
-            if (boardId == -1) { //처음 게시판 리스트를 호출하는 경우
+        if (scrollingType.equals("down")) {
+            if (boardId == FIRST_BOARD_SIGN) {
                 responseList = boardRepository.findAllByBoardStatusLessThan(DELETED_BOARD, request);
             } else {
                 responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdLessThan(DELETED_BOARD, boardId, request);
             }
-        } else if(type.equals("up")){
-            if(boardId == -1){
+        } else if(scrollingType.equals("up")){
+            if(boardId == FIRST_BOARD_SIGN){
                 throw new InvalidInputException("맨 처음 게시판 입니다.");
             }else{
                 responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdGreaterThan(DELETED_BOARD, boardId, request);
@@ -173,7 +176,7 @@ public class BoardService {
         if (StringUtils.isEmpty(contents)) {
             throw new InvalidInputException("세부사항을 입력해주세요.");
         }
-        if (subject.length() > CONTENT_MAX_LENGTH) {
+        if (contents.length() > CONTENT_MAX_LENGTH) {
             throw new InvalidInputException("글이 너무 깁니다.");
         }
         if (!isPhotoFile(fileName)) {
@@ -191,6 +194,7 @@ public class BoardService {
         updatedBoard.setBoardStatus(UPDATED_BOARD);
         updatedBoard.setBoardSubject(subject);
         updatedBoard.setBoardContents(contents);
+        updatedBoard.setBoardModDate(new Date());
 
         String filePath = null;
 
@@ -219,6 +223,8 @@ public class BoardService {
 
         try {
             deletedBoard.setBoardStatus(DELETED_BOARD);
+            deletedBoard.setBoardModDate(new Date());
+
             boardRepository.save(deletedBoard);
         } catch (DataAccessException e) {
             throw new ServerException("게시 글 삭제 중 문제가 발생");

@@ -41,7 +41,6 @@ public class Board {
     private Date boardRegDate ;
 
     @Column(name = "boardModDate")
-    @UpdateTimestamp
     // 수정 시간
     private Date boardModDate ;
 
