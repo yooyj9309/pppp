@@ -1,7 +1,6 @@
 package com.example.anonymous.service;
 
 import com.example.anonymous.domain.Member;
-import com.example.anonymous.domain.MemberRole;
 import com.example.anonymous.exception.InvalidInputException;
 import com.example.anonymous.exception.NoAuthException;
 import com.example.anonymous.exception.ServerException;
@@ -64,8 +63,6 @@ public class MemberService {
             throw new InvalidInputException("이미 존재하는 닉네임입니다.");
         }
 
-        MemberRole role = new MemberRole();
-        role.setRoleName("BASIC");
         String key = new TempKey().getKey(50, false);
 
         member = member.builder()

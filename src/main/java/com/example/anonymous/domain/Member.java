@@ -54,10 +54,10 @@ public class Member {
     // 회원 상태 코드
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinColumn(name="memberEmail")
-    private List<MemberRole> memberStatus;
+    private List<MemberRole> memberRoles;
 
     @Builder
-    public Member(String memberEmail, String memberPw, String memberPwCheck, String memberNick, Integer memberCheck, Date memberRegDate, Date memberModDate, String emailKey, List<MemberRole> memberStatus) {
+    public Member(String memberEmail, String memberPw, String memberPwCheck, String memberNick, Integer memberCheck, Date memberRegDate, Date memberModDate, String emailKey, List<MemberRole> memberRoles) {
         this.memberEmail = memberEmail;
         this.memberPw = memberPw;
         this.memberPwCheck = memberPwCheck;
@@ -66,7 +66,7 @@ public class Member {
         this.memberRegDate = memberRegDate;
         this.memberModDate = memberModDate;
         this.emailKey = emailKey;
-        this.memberStatus = memberStatus;
+        this.memberRoles = memberRoles;
     }
 
 }

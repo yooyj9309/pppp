@@ -6,19 +6,22 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @EqualsAndHashCode(of = "boardId")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+@ToString(exclude = "replies")
 public class Board {
     // 게시판 ID
     @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long  boardId;
+    @Column(name = "boardId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long  boardId;
 
     @Column(length = 500, nullable = false)
     private String boardSubject;
@@ -33,6 +36,7 @@ public class Board {
 
     @Column(nullable = false, length=100)
     // 게시자(닉네임)
+    @JoinColumn(name="memberNick")
     private String memberNick;
 
     @Column(name = "boardRegDate", updatable=false)
@@ -46,15 +50,18 @@ public class Board {
 
     @Column( length=20, columnDefinition = "int default 0")
     // 좋아요 수
-    private Integer likeCnt;
+    private int likeCnt;
 
     @Column(length=2, columnDefinition = "int default 0")
     // 게시판 상태 코드
-    private Integer boardStatus;
+    private int boardStatus;
 
     @Column( length=20, columnDefinition = "int default 0")
     // 조회 수
-    private Integer viewCnt;
+    private int viewCnt;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<Reply> replies;
 
     @Transient
     private MultipartFile imgFile;
@@ -63,7 +70,7 @@ public class Board {
     private String memberEmail;
 
     @Builder
-    public Board(Long boardId, String boardSubject, String boardContents, String filePath, String memberNick, Date boardRegDate, Date boardModDate, Integer likeCnt, Integer boardStatus, Integer viewCnt) {
+    public Board(long boardId, String boardSubject, String boardContents, String filePath, String memberNick, Date boardRegDate, Date boardModDate, int likeCnt, int boardStatus, int viewCnt) {
         this.boardId = boardId;
         this.boardSubject = boardSubject;
         this.boardContents = boardContents;

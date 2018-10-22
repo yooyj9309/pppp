@@ -19,7 +19,7 @@ public class SecurityMember extends User {
     private int emailCheck = 0;
 
     public SecurityMember(Member member) {
-        super(member.getMemberEmail(), member.getMemberPw(), makeGrantedAuthority(member.getMemberStatus()));
+        super(member.getMemberEmail(), member.getMemberPw(), makeGrantedAuthority(member.getMemberRoles()));
         this.emailCheck=member.getMemberCheck();
     }
 
