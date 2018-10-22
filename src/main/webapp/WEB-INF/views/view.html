@@ -61,8 +61,7 @@
             <h1 class="my-4" th:text="${board.boardSubject}"></h1>
             <input type="hidden" th:value="${board.boardId}" id="boardId"/>
             <div class="col-lg-4">
-                <a class="btn btn-primary btn-lg" id="updateButton" data-toggle="modal"
-                   data-target="#\updatingModal">수정</a>
+                <a class="btn btn-primary btn-lg" id="updateButton" data-toggle="modal" data-target="#\updatingModal">수정</a>
                 <a class="btn btn-primary btn-lg" id="deleteButton">삭제</a>
             </div>
             <div class="row my-4">
@@ -71,11 +70,10 @@
                 </div>
                 <div class="col-lg-4">
 
-                    <textarea style="resize:none;overflow:auto" th:text="${board.boardContents}" readonly="readonly"
-                              cols="70" rows="12"></textarea>
+                    <textarea style="resize:none;overflow:auto" th:text="${board.boardContents}" readonly="readonly" cols="70" rows="12"></textarea>
                 </div>
             </div>
-            작성자 : <label th:text="${board.memberNick}"></label>
+            작성자 : <label th:text="${board.member.memberNick}"></label>
             <p th:switch="${board.boardStatus}">
                 <label th:case="0">생성 일 : <label
                         th:text="${#dates.format(board.boardModDate, 'yyyy/MM/dd')}"></label></label>
@@ -89,8 +87,7 @@
                     <form name="replyInsertForm" id = "replyInsertForm">
                         <div class="input-group">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                            <input type="hidden" name="boardId"  th:value="${board.boardId}"/>
-                            <input type="hidden" name="memberEmail" th:value="${board.memberEmail}"/>
+                            <input type="hidden" name="boardId"  id = "paramBoardId" th:value="${board.boardId}"/>
                             <input type="text" class="form-control" id="replyContents" name="replyContents" placeholder="내용을 입력하세요.">
                             <span class="input-group-btn">
                              <button class="btn btn-default" type="button" name="btnReply" id="btnReply">등록</button>
@@ -100,7 +97,7 @@
                 </div>
 
                 <div class="container">
-                    <div class="commentList"></div>
+                    <div id="replyList"></div>
                 </div>
             </div>
         </div>
@@ -187,22 +184,21 @@
                 <form id="updateForm" th:action="@{/${board.boardId}}" encType="multipart/form-data">
                     <div class="form-group">
                         <label for="imgFile">이미지</label>
-                        <input type="file" class="form-control" name="imgFile" id="updateImgFile"
-                               placeholder="사진 수정 하기">
+                        <input type="hidden" name="boardId"  th:value="${board.boardId}"/>
+                        <input type="hidden" name="member" th:value="${board.member}"/>
+                        <input type="file" class="form-control" name="imgFile" id="updateImgFile" placeholder="사진 수정 하기">
                     </div>
                     <div class="form-group">
                         <label for="writeSubject">제목</label>
-                        <input type="text" class="form-control" th:value="${board.boardSubject}" name="boardSubject"
-                               id="updateSubject" placeholder="제목을 입력하세요" required="true" maxlength="500">
+                        <input type="text" class="form-control" th:value="${board.boardSubject}" name="boardSubject" id="updateSubject" placeholder="제목을 입력하세요" required="true" maxlength="500">
                     </div>
                     <div class="form-group">
                         <label for="writeContent"> 내용 </label>
-                        <textarea class="form-control" name="boardContents" th:text="${board.boardContents}"
-                                  id="updateContent" placeholder="내용을 입력하세요" required="true"
-                                  maxlength="2000"></textarea>
+                        <textarea class="form-control" name="boardContents" th:text="${board.boardContents}" id="updateContent" placeholder="내용을 입력하세요" required="true" maxlength="2000"></textarea>
                     </div>
                 </form>
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnUpdate">수정</button>

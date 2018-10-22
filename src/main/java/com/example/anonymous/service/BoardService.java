@@ -48,19 +48,21 @@ public class BoardService {
     @Autowired
     MemberRepository memberRepository;
 
-    public void registerBoardService(Board boardInfo, HttpSession session) {
+    public void registerBoardService(Board boardInfo, Principal principal) {
 
-        String memberEmail = boardInfo.getMemberEmail();
+        Member authorMember = null;
+        try{
+            authorMember =  memberRepository.findMemberByMemberEmail(principal.getName());
+        }catch (DataAccessException e){
+            throw new NoAuthException("게시글 작성할 권한이 없습니다.");
+        }
+
+        boardInfo.setMember(authorMember);
+
         String subject = boardInfo.getBoardSubject();
         String contents = boardInfo.getBoardContents();
         String fileName = boardInfo.getImgFile().getOriginalFilename();
-        String memberNick = null;
 
-        Member member = null;
-
-        if (StringUtils.isEmpty(memberEmail)) {
-            throw new NoAuthException("게시글 작성할 권한이 없습니다.");
-        }
         if (StringUtils.isEmpty(subject)) {
             throw new InvalidInputException("제목을 적어주세요.");
         }
@@ -76,20 +78,10 @@ public class BoardService {
         if (!isPhotoFile(fileName)) {
             throw new InvalidInputException("사진만 입력해주세요.");
         }
-        member = memberRepository.findMemberByMemberEmail(boardInfo.getMemberEmail());
 
-        if (member == null) {
-            throw new NoAuthException("게시글 작성할 권한이 없습니다.");
-        }
-        memberNick = member.getMemberNick();
-
-        boardInfo.setMemberNick(memberNick);
-        boardInfo.setLikeCnt(INITIAL_NUM);
-        boardInfo.setViewCnt(INITIAL_NUM);
-        boardInfo.setBoardStatus(CREATED_BOARD);
         boardInfo.setBoardModDate(new Date());
-
-        String filePath = ImgUtil.imgUpload("images", session, boardInfo.getImgFile(), boardInfo.getFilePath());
+        boardInfo.setMemberNick(authorMember.getMemberNick());
+        String filePath = ImgUtil.imgUpload("images", boardInfo.getImgFile(), boardInfo.getFilePath());
         boardInfo.setFilePath(filePath);
 
         try {
@@ -126,46 +118,43 @@ public class BoardService {
         return result;
     }
 
-    public Board getBoardById(Long boardId) {
-
+    public Board getBoardById(long boardId) {
         Board board = boardRepository.findBoardByBoardId(boardId);
-        Member member = memberRepository.findMemberByMemberNick(board.getMemberNick());
-        LOGGER.info(member.toString());
-        board.setMemberEmail(member.getMemberEmail());
-
+        LOGGER.info(board.toString());
         return board;
     }
 
-    public List<Board> getBoardList(long boardId, String scrollingType) {
+    public List<Board> getBoardList(long scrollSign, String scrollingType) {
         Pageable request = new PageRequest(0, ONE_PAGE_SIZE, Sort.Direction.DESC, "boardRegDate");
         List<Board> responseList = null;
 
         if (scrollingType.equals("down")) {
-            if (boardId == FIRST_BOARD_SIGN) {
+            if (scrollSign == FIRST_BOARD_SIGN) {
                 responseList = boardRepository.findAllByBoardStatusLessThan(DELETED_BOARD, request);
             } else {
-                responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdLessThan(DELETED_BOARD, boardId, request);
+                responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdLessThan(DELETED_BOARD, scrollSign, request);
             }
         } else if(scrollingType.equals("up")){
-            if(boardId == FIRST_BOARD_SIGN){
+            if(scrollSign == FIRST_BOARD_SIGN){
                 throw new InvalidInputException("맨 처음 게시판 입니다.");
             }else{
-                responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdGreaterThan(DELETED_BOARD, boardId, request);
+                responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdGreaterThan(DELETED_BOARD, scrollSign, request);
             }
         }
         return responseList;
     }
 
-    public void updateBoardById(Long boardId, Board inputBoard, HttpSession session) {
-        String sessionEmail = inputBoard.getMemberEmail();
-        String subject = inputBoard.getBoardSubject();
-        String contents = inputBoard.getBoardContents();
-        String fileName = inputBoard.getImgFile().getOriginalFilename();
+    public void updateBoardById(Board updatedBoard,Principal principal) {
+        Member authorMember = updatedBoard.getMember();
+        String subject = updatedBoard.getBoardSubject();
+        String contents = updatedBoard.getBoardContents();
+        String fileName = updatedBoard.getImgFile().getOriginalFilename();
 
         Member member = null;
 
-        if (StringUtils.isEmpty(sessionEmail)) {
-            throw new NoAuthException("게시글 작성할 권한이 없습니다.");
+        //작가와 현재 사용자의 이름이 다른 경우
+        if (!authorMember.getMemberEmail().equals(principal.getName())) {
+            throw new NoAuthException("게시글 수정할 권한이 없습니다.");
         }
         if (StringUtils.isEmpty(subject)) {
             throw new InvalidInputException("제목을 적어주세요.");
@@ -182,24 +171,13 @@ public class BoardService {
         if (!isPhotoFile(fileName)) {
             throw new InvalidInputException("사진만 입력해주세요.");
         }
-        member = memberRepository.findMemberByMemberEmail(inputBoard.getMemberEmail());
 
-        if (member == null) {
-            throw new NoAuthException("게시글 작성할 권한이 없습니다.");
-        }
-
-        //수정하기전 게시판 정보
-        Board updatedBoard = boardRepository.findBoardByBoardId(boardId);
         // 0: 생성됨 1: 업데이트 2:삭제
         updatedBoard.setBoardStatus(UPDATED_BOARD);
-        updatedBoard.setBoardSubject(subject);
-        updatedBoard.setBoardContents(contents);
         updatedBoard.setBoardModDate(new Date());
 
-        String filePath = null;
-
         if (!StringUtils.isEmpty(fileName)) {
-            filePath = ImgUtil.imgUpload("images", session, inputBoard.getImgFile(), fileName);
+            String filePath = ImgUtil.imgUpload("images", updatedBoard.getImgFile(), fileName);
             updatedBoard.setFilePath(filePath);
         }
         try {
@@ -210,17 +188,14 @@ public class BoardService {
         }
     }
 
-    public void deleteBoardById(Long boardId, Principal principal) {
+    public void deleteBoardById(long boardId, Principal principal) {
         Board deletedBoard = boardRepository.findBoardByBoardId(boardId);
-        String authorNick = deletedBoard.getMemberNick();
+        Member authorMember = deletedBoard.getMember();
 
-        Member accessMember = memberRepository.findMemberByMemberEmail(principal.getName());
-        String accessMemberNick = accessMember.getMemberNick();
-
-        if (!authorNick.equals(accessMemberNick)) {
-            throw new NoAuthException("삭제하실 권한이 없습니다.");
+        //게시자와 현재 사용자의 이름이 다를 때
+        if(!authorMember.getMemberEmail().equals(principal.getName())){
+            throw new NoAuthException("게시글 삭제할 권한이 없습니다.");
         }
-
         try {
             deletedBoard.setBoardStatus(DELETED_BOARD);
             deletedBoard.setBoardModDate(new Date());

@@ -35,17 +35,16 @@ public class BoardController {
     }
 
     @PostMapping(value = "/main")
-    public ResponseEntity<String> postContent(Board board, Principal principal, HttpSession session) {
-        LOGGER.info("Session 경로 : " + session.getServletContext().getRealPath(""));
+    public ResponseEntity<String> insertBoardContent(Board board, Principal principal) {
+       // LOGGER.info("Session 경로 : " + session.getServletContext().getRealPath(""));
 
-        board.setMemberEmail(principal.getName());
-        boardService.registerBoardService(board,session);
+        boardService.registerBoardService(board,principal);
 
         return new ResponseEntity<String>("게시글을 등록하였습니다.",HttpStatus.OK);
     }
 
     @GetMapping(value = "main/{boardId}")
-    public ModelAndView getDetailView(@PathVariable("boardId") Long boardId) {
+    public ModelAndView getDetailView(@PathVariable("boardId") long boardId) {
         LOGGER.info(boardId+"번 게시판 상세보기");
 
         ModelAndView mav = new ModelAndView();
@@ -53,22 +52,21 @@ public class BoardController {
         LOGGER.info(board.toString());
         mav.setViewName("view");
         mav.addObject("board",board);
-
+        mav.addObject("member",board.getMember());
         return mav;
     }
 
     @PostMapping(value = "main/{boardId}")
-    public ResponseEntity<String> updateBoard(@PathVariable("boardId") Long boardId, Board updatedBoard, Principal principal, HttpSession session) {
+    public ResponseEntity<String> updateBoard(@PathVariable("boardId") long boardId, Board updatedBoard,Principal principal) {
         LOGGER.info(boardId+"번 게시판 수정하기");
         LOGGER.info(updatedBoard.toString());
 
-        updatedBoard.setMemberEmail(principal.getName());
-        boardService.updateBoardById(boardId,updatedBoard,session);
+        boardService.updateBoardById(updatedBoard, principal);
         return new ResponseEntity<String>("게시글을 수정하였습니다.",HttpStatus.OK);
     }
 
     @DeleteMapping(value = "main/{boardId}")
-    public ResponseEntity<String> deleteBoard(@PathVariable("boardId") Long boardId, Principal principal) {
+    public ResponseEntity<String> deleteBoard(@PathVariable("boardId") long boardId, Principal principal) {
         LOGGER.info(boardId+"번 게시판 삭제하기");
         boardService.deleteBoardById(boardId,principal);
 

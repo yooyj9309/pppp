@@ -1,10 +1,12 @@
 package com.example.anonymous.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+
 @Getter
 @Setter
 @Entity
@@ -17,10 +19,6 @@ public class Reply {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     // 댓글 ID
     private long replyId;
-
-    @Column(nullable = false, length=100)
-    // 댓글 작성자 닉네임
-    private String memberNick;
 
     @Column(columnDefinition = "TEXT", length=1000)
     // 댓글 내용
@@ -35,17 +33,16 @@ public class Reply {
     // 댓글 수정일
     private Date replyModDate;
 
+    @JsonIgnore
     @ManyToOne
     private Board board;
+
+    @Column(nullable = false, unique = true, length=100)
+    private String memberNick;
 
     @Column
     // 댓글 부모 ID
     private long replyParentId;
-
-    @Column
-    @JoinColumn(name="boardId")
-    // 게시판 ID
-    private long boardId;
 
     @Column(length=2)
     // 댓글 상태
@@ -54,8 +51,5 @@ public class Reply {
     @Column(length=20)
     // 댓글 순서
     private long seq;
-
-    @Transient
-    private String memberEmail;
 
 }

@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @EqualsAndHashCode(of = "memberEmail")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+@ToString(exclude = "boards")
 public class Member {
 
     // 이메일
@@ -26,15 +26,16 @@ public class Member {
     private String memberPw;
 
     // 비밀번호 확인
-    @Column(nullable = false, length=100)
+    @Transient
     private String memberPwCheck;
+
     // 닉네임
     @Column(nullable = false, unique = true, length=100)
     private String memberNick;
 
     // 이메일 인증
-    @Column(length=2)
-    private Integer memberCheck = 0;
+    @Column(length=2, columnDefinition = "int default 0")
+    private int memberCheck;
 
     // 회원 등록일
     // 날짜 수정시 등록 시간 null로 수정되는 버그 fix
@@ -44,8 +45,10 @@ public class Member {
 
     // 정보 수정일
     @Column(name = "memberModDate")
-    @UpdateTimestamp
     private Date memberModDate;
+
+    @OneToMany(mappedBy = "member")
+    private List<Board> boards;
 
     //이메일 인증 키
     @Column(nullable = false, unique = true, length=100)
@@ -56,17 +59,5 @@ public class Member {
     @JoinColumn(name="memberEmail")
     private List<MemberRole> memberRoles;
 
-    @Builder
-    public Member(String memberEmail, String memberPw, String memberPwCheck, String memberNick, Integer memberCheck, Date memberRegDate, Date memberModDate, String emailKey, List<MemberRole> memberRoles) {
-        this.memberEmail = memberEmail;
-        this.memberPw = memberPw;
-        this.memberPwCheck = memberPwCheck;
-        this.memberNick = memberNick;
-        this.memberCheck = memberCheck;
-        this.memberRegDate = memberRegDate;
-        this.memberModDate = memberModDate;
-        this.emailKey = emailKey;
-        this.memberRoles = memberRoles;
-    }
 
 }

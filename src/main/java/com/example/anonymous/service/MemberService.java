@@ -65,19 +65,15 @@ public class MemberService {
 
         String key = new TempKey().getKey(50, false);
 
-        member = member.builder()
-                .memberEmail(encryptEmail)
-                .memberPw(encoder.encode(member.getMemberPw()))
-                .memberPwCheck(encoder.encode(member.getMemberPw()))
-                .memberCheck(0)
-                .emailKey(key)
-                .memberNick(nick)
-                .build();
+        member.setMemberEmail(encryptEmail);
+        member.setMemberPw(encoder.encode(member.getMemberPw()));
+        member.setEmailKey(key);
+        member.setMemberNick(nick);
 
         LOGGER.info(member.toString());
 
         memberRepository.save(member);
-        LOGGER.info("Create");
+        LOGGER.info("Sign UP Member");
 
         sendMail(email, key);
     }
