@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 @EqualsAndHashCode(of = "memberEmail")
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @ToString(exclude = "boards")
 public class Member {
 

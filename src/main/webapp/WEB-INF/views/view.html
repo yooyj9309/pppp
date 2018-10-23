@@ -109,8 +109,7 @@
 </div>
 
 <!-- /.modal -->
-<div class="modal fade" id="savePostsModal" tabindex="-1" role="dialog" aria-labelledby="savePostsLabel"
-     aria-hidden="true">
+<div class="modal fade" id="savePostsModal" tabindex="-1" role="dialog" aria-labelledby="savePostsLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -123,6 +122,7 @@
                 <form id="writeForm" encType="multipart/form-data">
                     <div class="form-group">
                         <label for="imgFile">이미지</label>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <input type="file" class="form-control" name="imgFile" id="imgFile" placeholder="사진 업로드 하기">
                     </div>
                     <div class="form-group">
