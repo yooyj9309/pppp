@@ -81,6 +81,8 @@ public class BoardService {
 
         boardInfo.setBoardModDate(new Date());
         boardInfo.setMemberNick(authorMember.getMemberNick());
+        boardInfo.setSessionEmail(authorMember.getMemberEmail());
+
         String filePath = ImgUtil.imgUpload("images", boardInfo.getImgFile(), boardInfo.getFilePath());
         boardInfo.setFilePath(filePath);
 

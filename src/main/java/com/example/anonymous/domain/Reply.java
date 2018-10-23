@@ -37,7 +37,7 @@ public class Reply {
     @ManyToOne
     private Board board;
 
-    @Column(nullable = false, unique = true, length=100)
+    @Column(nullable = false,length=100)
     private String memberNick;
 
     @Column
@@ -52,4 +52,6 @@ public class Reply {
     // 댓글 순서
     private long seq;
 
+    @Column(length=100)
+    private String sessionEmail;
 }

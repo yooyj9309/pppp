@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
@@ -37,18 +38,19 @@ public class ReplyService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReplyService.class);
 
-    public void insertReply(Reply reply,long boardId) {
+    public void insertReply(Reply reply, long boardId, Principal principal) {
         String replyContents = reply.getReplyContents();
         if (StringUtils.isEmpty(replyContents)) {
             throw new InvalidInputException("댓글을 입력해주세요.");
         }
         Board board = boardRepository.findBoardByBoardId(boardId);
+        Member authorMember = memberRepository.findMemberByMemberEmail(principal.getName());
 
-        LOGGER.info(board.toString());
-        LOGGER.info(board.getMember().getMemberNick());
-
-        reply.setMemberNick(board.getMember().getMemberNick());
+        reply.setMemberNick(authorMember.getMemberNick());
         reply.setBoard(board);
+        reply.setReplyModDate(new Date());
+        reply.setSessionEmail(principal.getName());
+
         try{
             replyRepository.save(reply);
         }catch(DataAccessException e){
@@ -61,5 +63,13 @@ public class ReplyService {
         Pageable request = new PageRequest(0, ONE_REPLY_SIZE, Sort.Direction.DESC, "replyRegDate");
         List<Reply> replyList = replyRepository.findAllByBoardBoardIdAndReplyStatusLessThan(boardId, DELETED_REPLY, request);
         return replyList;
+    }
+
+    public void updateReplyByReplyId(long replyId, String content){
+        Reply reply = replyRepository.findByReplyId(replyId);
+        reply.setReplyContents(content);
+        reply.setReplyModDate(new Date());
+
+        replyRepository.save(reply);
     }
 }

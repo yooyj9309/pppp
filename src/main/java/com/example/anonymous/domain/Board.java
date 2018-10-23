@@ -58,8 +58,11 @@ public class Board {
     @ManyToOne
     private Member member;
 
-    @Column(nullable = false, unique = true, length=100)
+    @Column(nullable = false, length=100)
     private String memberNick;
+
+    @Column(nullable = false,  length=100)
+    private String sessionEmail;
 
     @OneToMany(mappedBy = "board")
     private List<Reply> replies;

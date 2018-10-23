@@ -36,7 +36,6 @@ public class BoardController {
 
     @PostMapping(value = "/main")
     public ResponseEntity<String> insertBoardContent(Board board, Principal principal) {
-       // LOGGER.info("Session 경로 : " + session.getServletContext().getRealPath(""));
 
         boardService.registerBoardService(board,principal);
 

@@ -9,4 +9,6 @@ import java.util.List;
 public interface ReplyRepository extends PagingAndSortingRepository<Reply, Long> {
 
     List<Reply> findAllByBoardBoardIdAndReplyStatusLessThan(long boardId, int replyStatus, Pageable request);
+
+    Reply findByReplyId(long replyId);
 }

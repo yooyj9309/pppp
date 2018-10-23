@@ -9,6 +9,7 @@ import com.example.anonymous.repository.MemberRepository;
 
 import com.example.anonymous.repository.ReplyRepository;
 
+import com.example.anonymous.utils.SecurityUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -41,7 +42,15 @@ public class JPATest {
 
     @Test
     public void insertTest() {
+       Member member = new Member();
+       member.setMemberNick("yooyj9209");
+       member.setMemberEmail("f0cc5c6b73a3b45028df06d3a57de2cfc7321f40c28b8a1c39056fe1e43963d3");
+       member.setMemberRegDate(new Date());
+       member.setMemberCheck(1);
+       member.setMemberPw("$2a$10$NTKEwsw0VfKA5tuWmtWgh.uV6umdyix9Fc508gwbu92RzRNwdYngy");
+       member.setEmailKey("BuvfUxAgkkDfOIfgvYHkU0G5HICET61fT9JexGmUrQOapEaVXJ");
 
+       memberRepository.save(member);
     }
 
     @Test
