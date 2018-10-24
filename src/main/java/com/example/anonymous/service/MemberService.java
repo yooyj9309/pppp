@@ -32,6 +32,8 @@ public class MemberService {
     @Autowired
     private JavaMailSender mailSender;
 
+    private static final int DELETED_MEMBER_STATUS = 2;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MemberService.class);
 
     @Transactional
@@ -157,5 +159,13 @@ public class MemberService {
         diffDate = diffDate/(24*60*60*1000);
         LOGGER.info(diffDate+" ");
         return diffDate;
+    }
+    public void deleteMemberByMemberEmail(String memberEmail){
+        if(StringUtils.isEmpty(memberEmail)){
+            throw new NoAuthException("삭제할 권한이 없습니다.");
+        }
+        Member member = memberRepository.findMemberByMemberEmail(memberEmail);
+        member.setMemberCheck(DELETED_MEMBER_STATUS);
+        memberRepository.save(member);
     }
 }

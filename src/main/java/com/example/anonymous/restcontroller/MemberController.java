@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,4 +38,10 @@ public class MemberController {
         return new ResponseEntity<String>("닉네임을 변경했습니다.", HttpStatus.OK);
     }
 
+
+    @DeleteMapping(value = "/withdraw")
+    public ResponseEntity<String> withdrawMember(Principal principal) {
+        memberService.deleteMemberByMemberEmail(principal.getName());
+        return new ResponseEntity<String>("회원 탈퇴 하였습니다.", HttpStatus.OK);
+    }
 }

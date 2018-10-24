@@ -49,6 +49,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (member.getMemberCheck() == 0) {
             throw new NoAuthException("이메일 인증을 해주십쇼.");
         }
+        if (member.getMemberCheck() == 2) {
+            throw new NoAuthException("삭제된 계정입니다.");
+        }
         if (!encoder.matches(password, member.getMemberPw())) {
             logger.info("비밀번호가 다르다.");
             throw new InvalidInputException("비밀번호가 다릅니다.");

@@ -36,6 +36,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().ignoringAntMatchers("/nick/**")
                 .and()
+                .csrf().ignoringAntMatchers("/withdraw/**")
+                .and()
                 .formLogin()
                 .loginPage("/login")
                 .loginProcessingUrl("/login")

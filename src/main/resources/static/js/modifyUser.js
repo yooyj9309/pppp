@@ -3,7 +3,7 @@ $(document).ready(function () {
         var nickName = jQuery.trim($("#nickName").val());
 
         if (nickName == "" || nickName == null) {
-            alert("제목을 입력해주세요.");
+            alert("닉네임을 입력해주세요.");
             return;
         }
 
@@ -19,6 +19,21 @@ $(document).ready(function () {
                 alert(response.responseText);
             }
         });
+    });
+    $("#btnDeleteMember").click(function () {
+        if(confirm("정말 탈퇴하시겠습니까?")){
+            $.ajax({
+                type: "delete",
+                url: "withdraw",
+                success: function (response) {
+                    alert(response);
+                    location.href = "/login"
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
     });
 });
 
