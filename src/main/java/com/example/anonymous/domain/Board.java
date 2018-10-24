@@ -13,7 +13,6 @@ import java.util.List;
 @Setter
 @Entity
 @EqualsAndHashCode(of = "boardId")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = "replies")
 public class Board {
     // 게시판 ID

@@ -27,6 +27,9 @@ import java.util.List;
 @Service
 public class ReplyService {
     private static final int ONE_REPLY_SIZE = 10;
+    private static final int ONE_COMMENT_SIZE = 3;
+
+    private static final long ROOT_REPLY = 0;
     private static final int DELETED_REPLY = 2;
 
     @Autowired
@@ -51,9 +54,9 @@ public class ReplyService {
         reply.setReplyModDate(new Date());
         reply.setSessionEmail(principal.getName());
 
-        try{
+        try {
             replyRepository.save(reply);
-        }catch(DataAccessException e){
+        } catch (DataAccessException e) {
             throw new ServerException("댓글 저장 중 문제가 발생하였습니다.");
         }
 
@@ -61,15 +64,61 @@ public class ReplyService {
 
     public List<Reply> getReplyListByBoardId(long boardId, int page) {
         Pageable request = new PageRequest(page, ONE_REPLY_SIZE, Sort.Direction.DESC, "replyRegDate");
-        List<Reply> replyList = replyRepository.findAllByBoardBoardIdAndReplyStatusLessThan(boardId, DELETED_REPLY, request);
+        List<Reply> replyList = replyRepository.findAllByBoardBoardIdAndReplyParentId(boardId, ROOT_REPLY, request);
+
+        for (Reply parentReply : replyList) {
+            List<Reply> commentList = getCommentListByReplyId(parentReply.getReplyId(), 0);
+            if (commentList == null || commentList.isEmpty())
+                continue;
+            parentReply.setCommentList(commentList);
+        }
+
         return replyList;
     }
 
-    public void updateReplyByReplyId(long replyId, String content){
+    public void updateReplyByReplyId(long replyId, String content) {
         Reply reply = replyRepository.findByReplyId(replyId);
+        if (reply.getReplyStatus() == DELETED_REPLY) {
+            throw new InvalidInputException("이미 지워진 댓글 입니다.");
+        }
         reply.setReplyContents(content);
         reply.setReplyModDate(new Date());
 
+        if (content.equals("해당 댓글은 삭제되었습니다.")) {
+            reply.setReplyStatus(DELETED_REPLY);
+        }
         replyRepository.save(reply);
     }
+
+    public void insertCommentByReplyId(long replyId, String content, Principal principal) {
+        Reply parentReply = replyRepository.findByReplyId(replyId);
+        Member authorMember = memberRepository.findMemberByMemberEmail(principal.getName());
+        Reply comment = new Reply();
+
+        if (StringUtils.isEmpty(content)) {
+            throw new InvalidInputException("답글을 입력해주세요.");
+        }
+
+        comment.setBoard(parentReply.getBoard());
+        comment.setSessionEmail(authorMember.getMemberEmail());
+        comment.setReplyContents(content);
+        comment.setReplyParentId(replyId);
+        comment.setReplyModDate(new Date());
+        comment.setMemberNick(authorMember.getMemberNick());
+
+        replyRepository.save(comment);
+    }
+
+    public List<Reply> getCommentListByReplyId(long replyId, int page) {
+        Pageable request = new PageRequest(page, ONE_COMMENT_SIZE, Sort.Direction.DESC, "replyRegDate");
+        List<Reply> commentList = replyRepository.findAllByReplyParentId(replyId, request);
+        return commentList;
+    }
+
+    public List<Reply> getAllCommentListReplyId(long replyId){
+        Pageable request = new PageRequest(0,Integer.MAX_VALUE,Sort.Direction.DESC, "replyRegDate");
+        List<Reply> allCommentList = replyRepository.findAllByReplyParentId(replyId,request);
+        return allCommentList;
+    }
+
 }

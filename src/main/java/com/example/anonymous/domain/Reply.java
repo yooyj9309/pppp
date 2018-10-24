@@ -6,12 +6,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @EqualsAndHashCode(of = "replyId")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = "board")
 public class Reply {
     @Id
@@ -54,4 +54,7 @@ public class Reply {
 
     @Column(length=100)
     private String sessionEmail;
+
+    @Transient
+    private List<Reply> commentList;
 }

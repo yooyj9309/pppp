@@ -2,14 +2,13 @@ package com.example.anonymous.jpa;
 
 import com.example.anonymous.domain.Board;
 import com.example.anonymous.domain.Member;
-import com.example.anonymous.domain.MemberRole;
 import com.example.anonymous.domain.Reply;
 import com.example.anonymous.repository.BoardRepository;
 import com.example.anonymous.repository.MemberRepository;
 
 import com.example.anonymous.repository.ReplyRepository;
 
-import com.example.anonymous.utils.SecurityUtil;
+import com.example.anonymous.service.ReplyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -40,6 +39,9 @@ public class JPATest {
     @Autowired
     ReplyRepository replyRepository;
 
+    @Autowired
+    ReplyService replyService;
+
     @Test
     public void insertTest() {
        Member member = new Member();
@@ -65,18 +67,46 @@ public class JPATest {
 
     @Test
     public void replyTest(){
-        Pageable request = new PageRequest(0, 10, Sort.Direction.DESC, "replyRegDate");
-        List<Reply> replyList = replyRepository.findAllByBoardBoardIdAndReplyStatusLessThan(16,2,request);
+        List<Reply> replyList = replyService.getReplyListByBoardId(16,0);
         LOGGER.info(replyList.size()+" ");
         for(Reply reply : replyList){
             LOGGER.info(reply.toString());
+            if(reply.getCommentList()!=null) {
+                for (Reply comment : reply.getCommentList()) {
+                    LOGGER.info("답글 : " + comment.toString());
+                }
+            }
         }
-        request = new PageRequest(1, 10, Sort.Direction.DESC, "replyRegDate");
-        replyList = replyRepository.findAllByBoardBoardIdAndReplyStatusLessThan(16,2,request);
+        
+        Pageable request = new PageRequest(1, 10, Sort.Direction.DESC, "replyRegDate");
+        replyList =   replyRepository.findAllByBoardBoardIdAndReplyParentId(16,0,request);
         LOGGER.info(replyList.size()+" ");
         for(Reply reply : replyList){
             LOGGER.info(reply.toString());
         }
     }
 
+    @Test
+    public void commentTest(){
+        Pageable request = new PageRequest(0, 3, Sort.Direction.DESC, "replyRegDate");
+        List<Reply> replyList = replyRepository.findAllByReplyParentId(44,request);
+        LOGGER.info(replyList.size()+" ");
+        for(Reply reply : replyList){
+            LOGGER.info(reply.toString());
+        }
+        request = new PageRequest(1, 10, Sort.Direction.DESC, "replyRegDate");
+        replyList =  replyRepository.findAllByReplyParentId(44,request);
+        LOGGER.info(replyList.size()+" ");
+        for(Reply reply : replyList){
+            LOGGER.info(reply.toString());
+        }
+    }
+
+    @Test
+    public void allCommentTest(){
+        List<Reply> list = replyService.getAllCommentListReplyId(44);
+        for(Reply reply : list){
+            LOGGER.info(reply.toString());
+        }
+    }
 }
