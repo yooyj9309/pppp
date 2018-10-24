@@ -115,10 +115,17 @@ public class ReplyService {
         return commentList;
     }
 
-    public List<Reply> getAllCommentListReplyId(long replyId){
+    public List<Reply> getAllCommentListByReplyId(long replyId){
         Pageable request = new PageRequest(0,Integer.MAX_VALUE,Sort.Direction.DESC, "replyRegDate");
         List<Reply> allCommentList = replyRepository.findAllByReplyParentId(replyId,request);
         return allCommentList;
     }
 
+    public List<Reply> getReplyListByMemberEmail(String memberEmail){
+        List<Reply> replyListByMemberEmail = replyRepository.findAllBySessionEmail(memberEmail);
+        for(Reply reply:replyListByMemberEmail){
+            reply.setBoardId(reply.getBoard().getBoardId());
+        }
+        return replyListByMemberEmail;
+    }
 }

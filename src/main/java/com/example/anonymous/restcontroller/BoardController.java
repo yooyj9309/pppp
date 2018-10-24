@@ -1,8 +1,10 @@
 package com.example.anonymous.restcontroller;
 
 import com.example.anonymous.domain.Board;
+import com.example.anonymous.domain.Reply;
 import com.example.anonymous.repository.BoardRepository;
 import com.example.anonymous.service.BoardService;
+import com.example.anonymous.service.ReplyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class BoardController {
 
     @Autowired
     BoardService boardService;
+
+    @Autowired
+    ReplyService replyService;
 
     @GetMapping(value = "/boardList")
     public List<Board> getBoardList(@RequestParam("boardId") long boardId, @RequestParam("type") String type) {
@@ -70,5 +75,20 @@ public class BoardController {
         boardService.deleteBoardById(boardId,principal);
 
         return new ResponseEntity<String>("게시글을 삭제하였습니다.",HttpStatus.OK);
+    }
+
+
+
+    @GetMapping(value = "dashboard")
+    public ModelAndView getDashBoardView(ModelAndView mav,Principal principal){
+        List<Board> boardListByMemberEmail = boardService.getBoardListByMemberEmail(principal.getName());
+        List<Reply> replyListByMemberEmail = replyService.getReplyListByMemberEmail(principal.getName());
+
+        mav.addObject("boardList",boardListByMemberEmail);
+        mav.addObject("replyList", replyListByMemberEmail);
+
+        mav.setViewName("dashboard");
+
+        return mav;
     }
 }

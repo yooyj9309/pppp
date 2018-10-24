@@ -48,9 +48,8 @@ public class Reply {
     // 댓글 상태
     private int replyStatus;
 
-    @Column(length=20)
-    // 댓글 순서
-    private long seq;
+    @Transient
+    private long boardId;
 
     @Column(length=100)
     private String sessionEmail;

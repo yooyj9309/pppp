@@ -1,5 +1,6 @@
 package com.example.anonymous.controller;
 
+import com.example.anonymous.repository.MemberRepository;
 import com.example.anonymous.service.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,11 +10,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.security.Principal;
+
 
 @Controller
 public class viewController {
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(viewController.class);
 
     @GetMapping(value = "login")
@@ -22,8 +29,11 @@ public class viewController {
     }
 
     @GetMapping("main")
-    public ModelAndView getMainView() {
+    public ModelAndView getMainView(Principal principal) {
         ModelAndView mav = new ModelAndView();
+        String nick = memberRepository.findMemberByMemberEmail(principal.getName()).getMemberNick();
+
+        mav.addObject("nick",nick);
         mav.setViewName("main");
         return mav;
     }
@@ -33,5 +43,6 @@ public class viewController {
         model.addAttribute("msg","이메일 인증에 성공 하셨습니다.");
         return "login";
     }
+
 }
 

@@ -55,7 +55,7 @@
              contentType : false,
              success : function(response) {
                  alert(response);
-                 location.href="/main";
+                 location.href="/main/"+boardId;
              },
              error : function(response) {
                  alert(response.responseText);

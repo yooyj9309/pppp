@@ -210,4 +210,11 @@ public class BoardService {
             throw new ServerException("게시 글 삭제 중 문제가 발생");
         }
     }
+
+    public List<Board> getBoardListByMemberEmail(String memberEmail){
+        List<Board> boardListByMemberEmail = boardRepository.findAllByMemberMemberEmail(memberEmail);
+        return boardListByMemberEmail;
+    }
+
+
 }

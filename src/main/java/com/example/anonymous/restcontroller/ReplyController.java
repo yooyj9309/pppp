@@ -61,9 +61,9 @@ public class ReplyController {
 
         return new ResponseEntity<String>("답글 입력에 성공하였습니다.", HttpStatus.OK);
     }
-    
+
     @GetMapping(value = "/comment")
     public List<Reply> sendCommentList(@RequestParam long replyId){
-        return replyService.getAllCommentListReplyId(replyId);
+        return replyService.getAllCommentListByReplyId(replyId);
     }
 }

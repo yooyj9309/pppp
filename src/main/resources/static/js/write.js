@@ -109,7 +109,11 @@ $(document).ready(function () {
             output += " <a href=\"#\" class=\"btn btn-primary\">" + result[i].likeCnt + "</a>";
             output += " </div>";
             output += " <div class=\"card-footer text-muted\">";
-            output += " <label>" +"게시자 : "+ result[i].memberNick + "&nbsp;&nbsp;&nbsp;&nbsp;"+"</label> <label>" +"작성일 : "+timeFormat(result[i].boardModDate) + "</label>";
+            if(result[i].boardStatus == 0) {
+                output += " <label>" + "게시자 : " + result[i].memberNick + "&nbsp;&nbsp;&nbsp;&nbsp;" + "</label> <label>" + "작성일 : " + timeFormat(result[i].boardModDate) + "</label>";
+            }else if(result[i].boardStatus == 1){
+                output += " <label>" + "게시자 : " + result[i].memberNick + "&nbsp;&nbsp;&nbsp;&nbsp;" + "</label> <label>" + "수정일 : " + timeFormat(result[i].boardModDate) + "</label>";
+            }
             output += " </div>";
             output += " </div>";
         }
