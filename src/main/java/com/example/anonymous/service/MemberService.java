@@ -8,9 +8,11 @@ import com.example.anonymous.repository.MemberRepository;
 import com.example.anonymous.utils.MailHandler;
 import com.example.anonymous.utils.SecurityUtil;
 import com.example.anonymous.utils.TempKey;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import org.springframework.util.StringUtils;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class MemberService {
@@ -117,5 +121,41 @@ public class MemberService {
 
         member.setMemberCheck(1);
         memberRepository.save(member);
+    }
+
+    public void changNickName(String nickName,String sessionEmail){
+        if(StringUtils.isEmpty(nickName)){
+            throw new InvalidInputException("닉네임을 입력해주세요");
+        }
+        Member member = null;
+        try{
+            member = memberRepository.findMemberByMemberNick(nickName);
+
+            if(member!=null) {
+                throw new InvalidInputException("이미 존재하는 닉네임 입니다.");
+            }else {
+                member = memberRepository.findMemberByMemberEmail(sessionEmail);
+                LOGGER.info(member.getMemberRegDate()+" "+member.getMemberModDate());
+
+                if(member.getMemberModDate() == null || getDiffDate(member.getMemberModDate())>=7) {
+                    member.setMemberNick(nickName);
+                    member.setMemberModDate(new Date());
+                    memberRepository.save(member);
+                }else{
+                    throw new InvalidInputException("닉네임을 바꾸기에 너무 이릅니다.");
+                }
+
+            }
+        }catch (DataAccessException e){
+            throw  new ServerException("닉네임을 바꾸던 도중 서버 에러");
+        }
+    }
+
+    private long getDiffDate(Date mod){
+        long diffDate = new Date().getTime() - mod.getTime();
+
+        diffDate = diffDate/(24*60*60*1000);
+        LOGGER.info(diffDate+" ");
+        return diffDate;
     }
 }

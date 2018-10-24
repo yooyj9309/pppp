@@ -20,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -101,12 +103,13 @@ public class JPATest {
             LOGGER.info(reply.toString());
         }
     }
-
     @Test
-    public void allCommentTest(){
-        List<Reply> list = replyService.getAllCommentListReplyId(44);
-        for(Reply reply : list){
-            LOGGER.info(reply.toString());
-        }
+    public void Test(){
+       List<Member> list = memberRepository.findAll();
+       for(Member m : list){
+           m.setMemberModDate(null);
+           memberRepository.save(m);
+       }
+
     }
 }

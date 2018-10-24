@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
 
 @RestController
 public class MemberController {
@@ -26,5 +29,12 @@ public class MemberController {
         return new ResponseEntity<String>("해당 메일로 인증 요청을 보냈습니다.", HttpStatus.OK);
     }
 
+    @PostMapping(value = "/nick")
+    public ResponseEntity<String> changeNickName(@RequestParam String nickName, Principal principal) {
+
+        LOGGER.info(nickName);
+        memberService.changNickName(nickName, principal.getName());
+        return new ResponseEntity<String>("닉네임을 변경했습니다.", HttpStatus.OK);
+    }
 
 }

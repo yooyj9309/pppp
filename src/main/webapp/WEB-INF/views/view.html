@@ -158,20 +158,19 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="title">변경할 닉네임</label>
-                        <input type="text" class="form-control" id="title" placeholder="변경하실 닉네임을 작성하세요.">
+                        <label for="nickName">변경할 닉네임</label>
+                        <input type="text" id = "nickName" class="form-control"  placeholder="변경하실 닉네임을 작성하세요.">
                     </div>
 
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btn-save">등록</button>
+                <button type="button" class="btn btn-primary"  data-dismiss="modal" id="btnModifyNick">등록</button>
             </div>
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="updatingModal" tabindex="-1" role="dialog" aria-labelledby="savePostsLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -213,7 +212,8 @@
 <script src="../vendor/jquery/jquery.min.js"></script>
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="../js/update.js"></script>
-<script th:inline="javascript" src="../js/reply.js"></script>
+<script src="../js/reply.js"></script>
+<script src="../js/modifyNick.js"></script>
 
 <script th:inline="javascript">
     $(document).ready(function () {
