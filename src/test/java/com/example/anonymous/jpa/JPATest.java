@@ -66,7 +66,13 @@ public class JPATest {
     @Test
     public void replyTest(){
         Pageable request = new PageRequest(0, 10, Sort.Direction.DESC, "replyRegDate");
-        List<Reply> replyList = replyRepository.findAllByBoardBoardIdAndReplyStatusLessThan(86,2,request);
+        List<Reply> replyList = replyRepository.findAllByBoardBoardIdAndReplyStatusLessThan(16,2,request);
+        LOGGER.info(replyList.size()+" ");
+        for(Reply reply : replyList){
+            LOGGER.info(reply.toString());
+        }
+        request = new PageRequest(1, 10, Sort.Direction.DESC, "replyRegDate");
+        replyList = replyRepository.findAllByBoardBoardIdAndReplyStatusLessThan(16,2,request);
         LOGGER.info(replyList.size()+" ");
         for(Reply reply : replyList){
             LOGGER.info(reply.toString());

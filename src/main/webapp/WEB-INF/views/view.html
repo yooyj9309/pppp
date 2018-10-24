@@ -99,6 +99,7 @@
 
                 <div class="container">
                     <div id="replyList"></div>
+                    <button type="button" class="btn btn-primary" id="btnMoreReply">더보기</button>
                 </div>
             </div>
         </div>
@@ -186,7 +187,6 @@
                     <div class="form-group">
                         <label for="imgFile">이미지</label>
                         <input type="hidden" name="boardId"  th:value="${board.boardId}"/>
-                        <input type="hidden" name="member" th:value="${board.member}"/>
                         <input type="file" class="form-control" name="imgFile" id="updateImgFile" placeholder="사진 수정 하기">
                     </div>
                     <div class="form-group">

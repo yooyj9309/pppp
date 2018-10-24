@@ -22,8 +22,8 @@ public class ReplyController {
     ReplyService replyService;
 
     @GetMapping(value="/list")
-    public List<Reply> sendReplyList(@RequestParam("boardId") long boardId) {
-        List<Reply> replyList = replyService.getReplyListByBoardId(boardId);
+    public List<Reply> sendReplyList(@RequestParam("boardId") long boardId, @RequestParam("page") int page) {
+        List<Reply> replyList = replyService.getReplyListByBoardId(boardId, page);
 
         return replyList;
     }

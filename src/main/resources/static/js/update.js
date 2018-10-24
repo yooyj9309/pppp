@@ -40,11 +40,11 @@
 
          if (subject == "" || subject == null) {
              alert("제목을 입력해주세요.");
-             return;
+
          }
          if (content == "" || content == null) {
              alert("세부 사항을 입력 해주세요.");
-             return;
+
          }
 
          $.ajax({
@@ -63,7 +63,7 @@
          });
      });
 
-     $("#btnDelete").click(function() {
+     $("#deleteButton").click(function() {
         if(confirm("게시글을 삭제하시겠습니까?")){
             $.ajax({
                 type : "delete",

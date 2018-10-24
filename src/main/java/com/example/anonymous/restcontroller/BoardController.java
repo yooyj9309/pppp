@@ -56,11 +56,11 @@ public class BoardController {
     }
 
     @PostMapping(value = "main/{boardId}")
-    public ResponseEntity<String> updateBoard(@PathVariable("boardId") long boardId, Board updatedBoard,Principal principal) {
+    public ResponseEntity<String> updateBoard(@PathVariable("boardId") long boardId, Board inputBoard,Principal principal) {
         LOGGER.info(boardId+"번 게시판 수정하기");
-        LOGGER.info(updatedBoard.toString());
+        LOGGER.info(inputBoard.toString());
 
-        boardService.updateBoardById(updatedBoard, principal);
+        boardService.updateBoardById(boardId,inputBoard, principal);
         return new ResponseEntity<String>("게시글을 수정하였습니다.",HttpStatus.OK);
     }
 

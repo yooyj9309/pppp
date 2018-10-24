@@ -1,29 +1,54 @@
+var page = 0;
+function renderingReplyList(data){
 
+    var session = document.getElementById("sessionEmail").innerText;
 
+    var replyHtml ='';
+    for(var i in data){
+        replyHtml += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
+        replyHtml += '<div class="commentInfo'+data[i].replyId+'">'+'댓글번호 : '+data[i].replyId+' / 작성자 : '+data[i].memberNick;
+        if(session == data[i].sessionEmail) {
+            replyHtml += '<a onclick="commentUpdate(' + data[i].replyId + ',\'' + data[i].replyContents + '\');"> 수정 </a>';
+            replyHtml += '<a onclick="commentDelete(' + data[i].replyId + ');"> 삭제 </a> ';
+        }
+        replyHtml += '<a onclick="commentAddition(' + data[i].replyId + ');"> 답글 </a> ';
+        replyHtml += '</div><div class="commentContent'+data[i].replyId+'"> <p> '+data[i].replyContents +'</p>';
+        replyHtml += '<button onclick="commentMore(' + data[i].replyId + ');"> 더보기 </button> ';
+        replyHtml += '</div></div>';
+    }
+    return replyHtml;
+}
 //댓글 목록
 function commentList(){
     var boardId = $("#paramBoardId").val();
-    var session = document.getElementById("sessionEmail").innerText;
+    console.log(page);
     $.ajax({
-        url : '/reply/list?boardId='+boardId,
+        url : '/reply/list?boardId='+boardId+"&page=0",
         type : 'get',
         success : function(data){
-            var replyHtml ='';
-            for(var i in data){
-                replyHtml += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
-                replyHtml += '<div class="commentInfo'+data[i].replyId+'">'+'댓글번호 : '+data[i].replyId+' / 작성자 : '+data[i].memberNick;
-                if(session == data[i].sessionEmail) {
-                    replyHtml += '<a onclick="commentUpdate(' + data[i].replyId + ',\'' + data[i].replyContents + '\');"> 수정 </a>';
-                    replyHtml += '<a onclick="commentDelete(' + data[i].replyId + ');"> 삭제 </a> ';
-                }
-                replyHtml += '</div><div class="commentContent'+data[i].replyId+'"> <p> 내용 : '+data[i].replyContents +'</p>';
-                replyHtml += '</div></div>';
-            }
-
-            $("#replyList").html(replyHtml);
+            var replyHTML = renderingReplyList(data);
+            page= page+1;
+            $("#replyList").append(replyHTML);
         }
     });
 }
+
+$("#btnMoreReply").click(function () {
+    var boardId = $("#paramBoardId").val();
+    console.log(page);
+    $.ajax({
+        type: "get",
+        url : '/reply/list?boardId='+boardId+"&page="+page,
+        success: function (data) {
+            var replyHTML = renderingReplyList(data);
+            page= page+1;
+            $("#replyList").append(replyHTML);
+        },
+        error: function (response) {
+            alert(response.responseText);
+        }
+    });
+});
 
 $("#btnReply").click(function () {
     var content = $("#replyContents").val();

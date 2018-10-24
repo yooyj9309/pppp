@@ -146,13 +146,13 @@ public class BoardService {
         return responseList;
     }
 
-    public void updateBoardById(Board updatedBoard,Principal principal) {
-        Member authorMember = updatedBoard.getMember();
-        String subject = updatedBoard.getBoardSubject();
-        String contents = updatedBoard.getBoardContents();
-        String fileName = updatedBoard.getImgFile().getOriginalFilename();
+    public void updateBoardById(long boardId, Board inputBoard,Principal principal) {
+        Board board = boardRepository.findBoardByBoardId(boardId);
+        String subject = inputBoard.getBoardSubject();
+        String contents = inputBoard.getBoardContents();
+        String fileName = inputBoard.getImgFile().getOriginalFilename();
 
-        Member member = null;
+        Member authorMember = board.getMember();
 
         //작가와 현재 사용자의 이름이 다른 경우
         if (!authorMember.getMemberEmail().equals(principal.getName())) {
@@ -175,15 +175,18 @@ public class BoardService {
         }
 
         // 0: 생성됨 1: 업데이트 2:삭제
-        updatedBoard.setBoardStatus(UPDATED_BOARD);
-        updatedBoard.setBoardModDate(new Date());
+        board.setBoardSubject(inputBoard.getBoardSubject());
+        board.setBoardContents(inputBoard.getBoardContents());
+        board.setBoardStatus(UPDATED_BOARD);
+        board.setBoardModDate(new Date());
+
 
         if (!StringUtils.isEmpty(fileName)) {
-            String filePath = ImgUtil.imgUpload("images", updatedBoard.getImgFile(), fileName);
-            updatedBoard.setFilePath(filePath);
+            String filePath = ImgUtil.imgUpload("images", inputBoard.getImgFile(), fileName);
+            board.setFilePath(filePath);
         }
         try {
-            boardRepository.save(updatedBoard);
+            boardRepository.save(board);
         } catch (DataAccessException e) {
             deletePhoto(fileName);
             throw new ServerException("게시글 작성중 문제가 발생했습니다.");

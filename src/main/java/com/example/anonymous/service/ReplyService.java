@@ -59,8 +59,8 @@ public class ReplyService {
 
     }
 
-    public List<Reply> getReplyListByBoardId(long boardId) {
-        Pageable request = new PageRequest(0, ONE_REPLY_SIZE, Sort.Direction.DESC, "replyRegDate");
+    public List<Reply> getReplyListByBoardId(long boardId, int page) {
+        Pageable request = new PageRequest(page, ONE_REPLY_SIZE, Sort.Direction.DESC, "replyRegDate");
         List<Reply> replyList = replyRepository.findAllByBoardBoardIdAndReplyStatusLessThan(boardId, DELETED_REPLY, request);
         return replyList;
     }
