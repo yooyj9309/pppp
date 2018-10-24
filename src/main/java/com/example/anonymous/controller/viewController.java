@@ -24,7 +24,9 @@ public class viewController {
     private static final Logger LOGGER = LoggerFactory.getLogger(viewController.class);
 
     @GetMapping(value = "login")
-    public String getLoginView() {
+    public String getLoginView(Model model) {
+        String randomNick = memberService.getRandomName();
+        model.addAttribute("nick",randomNick);
         return "login";
     }
 

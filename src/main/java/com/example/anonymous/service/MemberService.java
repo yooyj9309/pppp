@@ -21,7 +21,6 @@ import org.springframework.util.StringUtils;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
@@ -167,5 +166,16 @@ public class MemberService {
         Member member = memberRepository.findMemberByMemberEmail(memberEmail);
         member.setMemberCheck(DELETED_MEMBER_STATUS);
         memberRepository.save(member);
+    }
+
+    public String getRandomName(){
+        StringBuffer randomName = new StringBuffer();
+        int nameSize = (int)((Math.random()*100)%10+1);
+
+        for(int i = 0; i <nameSize; i++){
+            char ch = (char)((Math.random() * 11172) + 0xAC00);
+            randomName.append(ch);
+        }
+        return randomName.toString();
     }
 }

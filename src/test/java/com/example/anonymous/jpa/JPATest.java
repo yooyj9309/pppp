@@ -8,6 +8,7 @@ import com.example.anonymous.repository.MemberRepository;
 
 import com.example.anonymous.repository.ReplyRepository;
 
+import com.example.anonymous.service.MemberService;
 import com.example.anonymous.service.ReplyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +44,9 @@ public class JPATest {
 
     @Autowired
     ReplyService replyService;
+
+    @Autowired
+    MemberService memberService;
 
     @Test
     public void insertTest() {
@@ -104,12 +108,10 @@ public class JPATest {
         }
     }
     @Test
-    public void Test(){
-       List<Member> list = memberRepository.findAll();
-       for(Member m : list){
-           m.setMemberModDate(null);
-           memberRepository.save(m);
-       }
+    public void randomNameTest(){
 
+        for(int i=0;i<10;i++) {
+            LOGGER.info(memberService.randomName());
+        }
     }
 }
