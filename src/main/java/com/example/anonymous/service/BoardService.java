@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -148,9 +149,14 @@ public class BoardService {
             if (scrollSign == FIRST_BOARD_SIGN) {
                 throw new InvalidInputException("맨 처음 게시판 입니다.");
             } else {
+                request = new PageRequest(0, ONE_PAGE_SIZE, Sort.Direction.ASC, "boardRegDate");
                 responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdGreaterThan(DELETED_BOARD, scrollSign, request);
+                Collections.reverse(responseList);
             }
+        }else{
+            throw new InvalidInputException("잘못된 스크롤 접근입니다.");
         }
+
 
         for (Board response : responseList) {
             int commentSize = replyRepository.findAllByBoardBoardId(response.getBoardId()).size();

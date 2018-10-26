@@ -2,6 +2,7 @@ package com.example.anonymous.member;
 
 import com.example.anonymous.domain.Member;
 import com.example.anonymous.repository.MemberRepository;
+import com.example.anonymous.security.CustomAuthenticationProvider;
 import com.example.anonymous.service.MemberService;
 
 import org.junit.Test;
@@ -19,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 
@@ -73,4 +73,5 @@ public class MemberServiceTest {
         }
         log.info("Not Duplicate");
     }
+
 }
