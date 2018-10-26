@@ -13,7 +13,6 @@ public class SecurityUtil {
         try {
             digestMessage = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
             throw new ServerException("비밀 번호 암호화중 실패");
         }
         digestMessage.update(str.getBytes());

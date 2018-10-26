@@ -8,9 +8,10 @@ import com.example.anonymous.repository.MemberRepository;
 import com.example.anonymous.utils.MailHandler;
 import com.example.anonymous.utils.SecurityUtil;
 import com.example.anonymous.utils.TempKey;
-import org.omg.CORBA.DynAnyPackage.Invalid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -47,10 +48,9 @@ public class MemberService {
 
         //사용자 입력 값이 null일 때
         if (StringUtils.isEmpty(email) || StringUtils.isEmpty(pw) || StringUtils.isEmpty(pwCheck) || StringUtils.isEmpty(nick)) {
-            throw new NullPointerException();
+            throw new InvalidInputException("입력 값을 제대로 입력해주세요");
         }
 
-        //수정 필요
         //비밀번호와 체크가 다를 때
         if (!pw.equals(pwCheck)) {
             throw new InvalidInputException("비밀 번호가 다릅니다.");
@@ -58,7 +58,7 @@ public class MemberService {
 
         //이미 존재하는 이메일인 경우
         //matches를 사용하는 경우 list iterator를 사용해야 하기 때문에 단일 hash로 구현하기
-        if (memberRepository.findMemberByMemberEmail(encryptEmail) != null) {
+        if (memberRepository.findMemberByMemberEmail(encryptEmail) != null && memberRepository.findMemberByMemberEmail(encryptEmail).getMemberCheck()!= 2) {
             throw new InvalidInputException("이미 가입한 메일입니다.");
         }
 

@@ -2,10 +2,9 @@ package com.example.anonymous.domain;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +37,6 @@ public class Member {
     private int memberCheck;
 
     // 회원 등록일
-    // 날짜 수정시 등록 시간 null로 수정되는 버그 fix
     @Column(name = "memberRegDate", updatable=false)
     @CreationTimestamp
     private Date memberRegDate;
