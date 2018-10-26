@@ -31,19 +31,19 @@ import java.util.regex.Pattern;
 @Service
 public class BoardService {
 
-    private static final int CREATED_BOARD = 0;
     private static final int UPDATED_BOARD = 1;
     private static final int DELETED_BOARD = 2;
 
-    private static final int INITIAL_NUM = 0;
-
     private static final int FIRST_BOARD_SIGN = -1;
+
+    private static final int LIKE_CANCEL_STATUS = 0;
+    private static final int LIKE_ACTIVE_STATUS = 1;
 
     private static final int ONE_PAGE_SIZE = 5;
     private static final int SUBJECT_MAX_LENGTH = 500;
     private static final int CONTENT_MAX_LENGTH = 2000;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(BoardService.class);
+
     @Autowired
     BoardRepository boardRepository;
 
@@ -57,7 +57,6 @@ public class BoardService {
     LikeRepository likeRepository;
 
     public void registerBoardService(Board boardInfo, Principal principal) {
-
         Member authorMember = null;
         try {
             authorMember = memberRepository.findMemberByMemberEmail(principal.getName());
@@ -123,8 +122,9 @@ public class BoardService {
         Matcher m = p.matcher(str);
         result = m.matches();
 
-        if (StringUtils.isEmpty(str))
+        if (StringUtils.isEmpty(str)) {
             result = true;
+        }
         return result;
     }
 
@@ -160,10 +160,10 @@ public class BoardService {
 
             LikeTable likeInfo = likeRepository.findByBoardIdAndMemberEmail(response.getBoardId(), memberEmail);
             //좋아요를 누른 적이 없거나 좋아요 취소를 할때
-            if (likeInfo == null || likeInfo.getCheckLike() == 0) {
-                response.setLikeStatus(0);
-            } else if (likeInfo.getCheckLike() == 1) { // 좋아요를 이미 누른 상태일 때
-                response.setLikeStatus(1);
+            if (likeInfo == null || likeInfo.getCheckLike() == LIKE_CANCEL_STATUS) {
+                response.setLikeStatus(LIKE_CANCEL_STATUS);
+            } else if (likeInfo.getCheckLike() == LIKE_ACTIVE_STATUS) { // 좋아요를 이미 누른 상태일 때
+                response.setLikeStatus(LIKE_ACTIVE_STATUS);
             }
         }
 
@@ -248,18 +248,20 @@ public class BoardService {
         if (likeTable == null) {
             likeTable = new LikeTable();
 
-            likeTable.setCheckLike(1);
+            likeTable.setCheckLike(LIKE_ACTIVE_STATUS);
             likeTable.setBoardId(boardId);
             likeTable.setMemberEmail(memberEmail);
             likeBoard.setLikeCnt(likeBoard.getLikeCnt() + 1);
-        }else if (likeTable.getCheckLike() == 0) {
-            likeTable.setCheckLike(1);
+        } else if (likeTable.getCheckLike() == LIKE_CANCEL_STATUS) {
+            
+            likeTable.setCheckLike(LIKE_ACTIVE_STATUS);
             likeBoard.setLikeCnt(likeBoard.getLikeCnt() + 1);
-        }else if(likeTable.getCheckLike() == 1){
-            likeTable.setCheckLike(0);
+        } else if (likeTable.getCheckLike() == LIKE_ACTIVE_STATUS) {
+
+            likeTable.setCheckLike(LIKE_CANCEL_STATUS);
             likeBoard.setLikeCnt(likeBoard.getLikeCnt() - 1);
             result = 1;
-        }else {
+        } else {
             throw new InvalidInputException("잘못된 접근입니다.");
         }
 
