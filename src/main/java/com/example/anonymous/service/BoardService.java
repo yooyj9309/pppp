@@ -253,7 +253,7 @@ public class BoardService {
             likeTable.setMemberEmail(memberEmail);
             likeBoard.setLikeCnt(likeBoard.getLikeCnt() + 1);
         } else if (likeTable.getCheckLike() == LIKE_CANCEL_STATUS) {
-            
+
             likeTable.setCheckLike(LIKE_ACTIVE_STATUS);
             likeBoard.setLikeCnt(likeBoard.getLikeCnt() + 1);
         } else if (likeTable.getCheckLike() == LIKE_ACTIVE_STATUS) {

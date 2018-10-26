@@ -34,6 +34,7 @@ public class MemberService {
 
     private static final int DELETED_MEMBER_STATUS = 2;
 
+    private static final int EMAIL_CHECK = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(MemberService.class);
 
     @Transactional
@@ -58,7 +59,7 @@ public class MemberService {
 
         //이미 존재하는 이메일인 경우
         //matches를 사용하는 경우 list iterator를 사용해야 하기 때문에 단일 hash로 구현하기
-        if (memberRepository.findMemberByMemberEmail(encryptEmail) != null && memberRepository.findMemberByMemberEmail(encryptEmail).getMemberCheck()!= 2) {
+        if (memberRepository.findMemberByMemberEmail(encryptEmail) != null && memberRepository.findMemberByMemberEmail(encryptEmail).getMemberCheck()!= DELETED_MEMBER_STATUS) {
             throw new InvalidInputException("이미 가입한 메일입니다.");
         }
 
@@ -99,6 +100,8 @@ public class MemberService {
             mailHandler.setFrom("yooyj9219@gmail.com", "yooyj9309");
             mailHandler.setTo(email);
             mailHandler.send();
+            LOGGER.info(email+" - 이메일 전송 완료");
+
         } catch (UnsupportedEncodingException e) {
             throw new ServerException("메일 인증 중 오류");
         } catch (MessagingException e) {
@@ -120,7 +123,7 @@ public class MemberService {
             throw new NoAuthException("잘못된 접근입니다.");
         }
 
-        member.setMemberCheck(1);
+        member.setMemberCheck(EMAIL_CHECK);
         memberRepository.save(member);
     }
 
@@ -169,8 +172,11 @@ public class MemberService {
     }
 
     public String getRandomName(){
+        final int leastNameSize = 4;
+        final int MAX_NAME_SIZE = 12;
+
         StringBuffer randomName = new StringBuffer();
-        int nameSize = (int)((Math.random()*100)%10+1);
+        int nameSize = (int)((Math.random()*100)%MAX_NAME_SIZE+leastNameSize);
 
         for(int i = 0; i <nameSize; i++){
             char ch = (char)((Math.random() * 11172) + 0xAC00);
