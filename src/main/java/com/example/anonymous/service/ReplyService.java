@@ -67,7 +67,7 @@ public class ReplyService {
         List<Reply> replyList = replyRepository.findAllByBoardBoardIdAndReplyParentId(boardId, ROOT_REPLY, request);
 
         for (Reply parentReply : replyList) {
-            List<Reply> commentList = getCommentListByReplyId(parentReply.getReplyId(), 0);
+            List<Reply> commentList = getCommentListByReplyId(parentReply.getReplyId());
             if (commentList == null || commentList.isEmpty())
                 continue;
             parentReply.setCommentList(commentList);
@@ -109,8 +109,8 @@ public class ReplyService {
         replyRepository.save(comment);
     }
 
-    public List<Reply> getCommentListByReplyId(long replyId, int page) {
-        Pageable request = new PageRequest(page, ONE_COMMENT_SIZE, Sort.Direction.DESC, "replyRegDate");
+    public List<Reply> getCommentListByReplyId(long replyId) {
+        Pageable request = new PageRequest(0, ONE_COMMENT_SIZE, Sort.Direction.DESC, "replyRegDate");
         List<Reply> commentList = replyRepository.findAllByReplyParentId(replyId, request);
         return commentList;
     }

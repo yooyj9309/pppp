@@ -7,18 +7,18 @@ function renderingReplyList(data){
     var replyHtml ='';
     for(var i in data){
         replyHtml += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
-        replyHtml += '<div class="commentInfo'+data[i].replyId+'">'+'댓글번호 : '+data[i].replyId+' / 작성자 : '+data[i].memberNick;
+        replyHtml += '<div class="commentInfo'+data[i].replyId+'">'+data[i].memberNick+'&nbsp;';
 
         if(session == data[i].sessionEmail && data[i].replyStatus != 2) {
-            replyHtml += '<a onclick="replyUpdateDisplay(' + data[i].replyId + ',\'' + data[i].replyContents + '\');"> 수정 </a>';
-            replyHtml += '<a onclick="replyDeleteByReplyId(' + data[i].replyId + ');"> 삭제 </a> ';
+            replyHtml += '<a type = "button" onclick="replyUpdateDisplay(' + data[i].replyId + ',\'' + data[i].replyContents + '\');"> 수정 </a>&nbsp;';
+            replyHtml += '<a type = "button" onclick="replyDeleteByReplyId(' + data[i].replyId + ');"> 삭제 </a> &nbsp;';
         }
         replyHtml += '<a onclick="commentDisplay(' + data[i].replyId + ');"> 답글 </a> ';
         replyHtml += '</div><div id="commentContent'+data[i].replyId+'"> <p> '+data[i].replyContents +'</p>';
 
         replyHtml += '<div style = "visibility: hidden;"id ="modifyReply'+data[i].replyId+'" class="input-group">';
         replyHtml += '<input type="text" class="form-control" name="content_'+data[i].replyId+'" value="'+data[i].replyContents+'"/>';
-        replyHtml += '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="replyUpdateByReplyId('+data[i].replyId+');">수정</button> ';
+        replyHtml += '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="replyUpdateByReplyId('+data[i].replyId+');">수정</button>';
         replyHtml += '<button class="btn btn-default" type="button" onclick="replyCancelDisplay('+data[i].replyId+');">취소</button> </span>';
         replyHtml += '</div>';
 
@@ -30,12 +30,12 @@ function renderingReplyList(data){
         replyHtml += '<div id="commentList'+data[i].replyId+'">';
 
         for(var j in data[i].commentList){
-            replyHtml += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
-            replyHtml += '<div class="commentInfo'+data[i].replyId+'">'+'답글 작성자 : '+data[i].commentList[j].memberNick;
+            replyHtml += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px; padding-left:20px;">';
+            replyHtml += '<div class="commentInfo'+data[i].replyId+'">'+'답글 '+data[i].commentList[j].memberNick+'&nbsp;';
 
             if(session == data[i].commentList[j].sessionEmail && data[i].commentList[j].replyStatus != 2) {
-                replyHtml += '<a onclick="replyUpdateDisplay(' + data[i].commentList[j].replyId + ',\'' + data[i].commentList[j].replyContents + '\');"> 수정 </a>';
-                replyHtml += '<a onclick="replyDeleteByReplyId(' + data[i].commentList[j].replyId + ');"> 삭제 </a> ';
+                replyHtml += '<a type = "button" onclick="replyUpdateDisplay(' + data[i].commentList[j].replyId + ',\'' + data[i].commentList[j].replyContents + '\');"> 수정 </a>&nbsp;';
+                replyHtml += '<a type = "button" onclick="replyDeleteByReplyId(' + data[i].commentList[j].replyId + ');"> 삭제 </a> ';
             }
             replyHtml += '</div><div id="commentContent'+data[i].commentList[j].replyId+'"> <p> '+data[i].commentList[j].replyContents +'</p>';
 
@@ -44,7 +44,6 @@ function renderingReplyList(data){
             replyHtml += '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="replyUpdateByReplyId('+data[i].commentList[j].replyId+');">수정</button> ';
             replyHtml += '<button class="btn btn-default" type="button" onclick="replyCancelDisplay('+data[i].commentList[j].replyId+');">취소</button> </span>';
             replyHtml += '</div>';
-
             replyHtml += '</div></div>';
         }
         replyHtml += '</div>'
@@ -63,14 +62,16 @@ function commentMore(replyId){
         type: "get",
         url : '/reply/comment?replyId='+replyId,
         success: function (data) {
+            console.log(data);
+
             var replyHtml = "";
             for(var i in data){
-                replyHtml += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px;">';
-                replyHtml += '<div class="commentInfo'+data[i].replyId+'">'+' 답글 작성자 : '+data[i].memberNick;
+                replyHtml += '<div class="commentArea" style="border-bottom:1px solid darkgray; margin-bottom: 15px; padding-left:20px;">';
+                replyHtml += '<div class="commentInfo'+data[i].replyId+'">'+' 답글 '+data[i].memberNick+'&nbsp;';
 
                 if(session == data[i].sessionEmail && data[i].replyStatus != 2) {
-                    replyHtml += '<a onclick="replyUpdateDisplay(' + data[i].replyId + ',\'' + data[i].replyContents + '\');"> 수정 </a>';
-                    replyHtml += '<a onclick="replyDeleteByReplyId(' + data[i].replyId + ');"> 삭제 </a> ';
+                    replyHtml += '<a type = "button" onclick="replyUpdateDisplay(' + data[i].replyId + ',\'' + data[i].replyContents + '\');"> 수정 </a>&nbsp;';
+                    replyHtml += '<a type = "button" onclick="replyDeleteByReplyId(' + data[i].replyId + ');"> 삭제 </a> ';
                 }
                 replyHtml += '</div><div id="commentContent'+data[i].replyId+'"> <p> '+data[i].replyContents +'</p>';
 
@@ -82,7 +83,6 @@ function commentMore(replyId){
 
                 replyHtml += '</div></div>';
             }
-            page= page+1;
             $("#commentList"+replyId).html(replyHtml);
         },
         error: function (response) {
@@ -100,7 +100,6 @@ function replyList(){
         type : 'get',
         success : function(data){
             var replyHTML = renderingReplyList(data);
-            page= page+1;
             $("#replyList").append(replyHTML);
         },
         error: function (response) {
@@ -112,13 +111,13 @@ function replyList(){
 //댓글 더보기
 $("#btnMoreReply").click(function () {
     var boardId = $("#paramBoardId").val();
+    page= page+1;
     console.log(page);
     $.ajax({
         type: "get",
         url : '/reply/list?boardId='+boardId+"&page="+page,
         success: function (data) {
             var replyHTML = renderingReplyList(data);
-            page= page+1;
             $("#replyList").append(replyHTML);
         },
         error: function (response) {
@@ -142,8 +141,7 @@ $("#btnReply").click(function () {
         data: param,
         success: function (result) {
             alert(result);
-            replyList();
-            $("#replyContents").val('');
+            location.href="../main/"+boardId;
         },
         error: function (response) {
             alert(response.responseText);
@@ -180,17 +178,19 @@ function replyCancelDisplay(replyId){
 //댓글 삭제
 function replyDeleteByReplyId(replyId){
     var boardId = $("#paramBoardId").val();
-    $.ajax({
-        url: '/reply/?replyId='+replyId,
-        type : 'delete',
-        success : function(data){
-            alert(data);
-            location.href="../main/"+boardId;
-        },
-        error: function (response) {
-            alert(response.responseText);
-        }
-    });
+    if(confirm("댓글을 삭제하시겠습니까?")) {
+        $.ajax({
+            url: '/reply/?replyId=' + replyId,
+            type: 'delete',
+            success: function (data) {
+                alert(data);
+                location.href = "../main/" + boardId;
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
 }
 
 function commentDisplay(replyId){

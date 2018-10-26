@@ -74,7 +74,7 @@ $(document).ready(function () {
             output += "<h2 class=\"card-title\">" + result[i].boardSubject + "</h2>";
             output += "</a>";
             output += "<p class=\"card-text\">" + result[i].boardContents + "</p>";
-            output += " <a href=\"/main/" + result[i].boardId + "\" class=\"btn btn-primary\">상세보기 [" + result[i].viewCnt + "]</a>&nbsp;&nbsp;";
+            output += " <a type='button' href=\"/main/" + result[i].boardId + "\" class=\"btn btn-primary\">상세보기 <span class=\"badge\">"+result[i].viewCnt+"</span></a>&nbsp;&nbsp;";
             output += '<a onclick="likeProcess(' + result[i].boardId + ',' + result[i].likeStatus + ');">';
 
             console.log(result[i].likeStatus);
@@ -85,7 +85,7 @@ $(document).ready(function () {
                 output += '<img src = "images/heart.png" id="like' + result[i].boardId + '">';
             }
 
-            output += '</a> <label id="likeCnt' + result[i].boardId + '">' + result[i].likeCnt + '</label>';
+            output += '</a> <label id="likeCnt' + result[i].boardId + '"><span class="badge">'+result[i].likeCnt+'</span></label>';
             output += " </div>";
             output += " <div class=\"card-footer text-muted\">";
 
@@ -95,7 +95,7 @@ $(document).ready(function () {
                 output += " <label>" + "게시자 : " + result[i].memberNick + "&nbsp;&nbsp;&nbsp;&nbsp;" + "</label> <label>" + "수정일 : " + timeFormat(result[i].boardModDate) + "</label>";
             }
 
-            output += ' <label>댓글 수 : ' + result[i].commentCnt + '</label>';
+            output += ' <label>댓글 수 <span class="badge">'+result[i].commentCnt+'</span></label>';
             output += " </div>";
             output += " </div>";
         }

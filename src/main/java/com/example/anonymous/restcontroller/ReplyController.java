@@ -56,7 +56,7 @@ public class ReplyController {
     @PostMapping(value = "/comment")
     public ResponseEntity<String> insertComment(@RequestParam long replyId, @RequestParam String content,Principal principal) {
         LOGGER.info(replyId+"를 부모로 삼는 "+content +" 답글");
-        replyService.insertCommentByReplyId(replyId,"-> "+content,principal);
+        replyService.insertCommentByReplyId(replyId,content,principal);
 
         return new ResponseEntity<String>("답글 입력에 성공하였습니다.", HttpStatus.OK);
     }
