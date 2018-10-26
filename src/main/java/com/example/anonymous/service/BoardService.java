@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -153,7 +154,7 @@ public class BoardService {
                 responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdGreaterThan(DELETED_BOARD, scrollSign, request);
                 Collections.reverse(responseList);
             }
-        }else{
+        } else {
             throw new InvalidInputException("잘못된 스크롤 접근입니다.");
         }
 
@@ -246,35 +247,43 @@ public class BoardService {
         return boardListByMemberEmail;
     }
 
+    @Transactional
     public int processLikeByBoardIdAndMemberEmail(long boardId, String memberEmail) {
         LikeTable likeTable = likeRepository.findByBoardIdAndMemberEmail(boardId, memberEmail);
         Board likeBoard = boardRepository.findBoardByBoardId(boardId);
-        int result = 0;
+
+        int likeStatus = 0;
+
+        if(likeBoard == null){
+            throw new InvalidInputException("잘못된(존재하지 않은) 게시글 접근 입니다.");
+        }
 
         if (likeTable == null) {
             likeTable = new LikeTable();
-
-            likeTable.setCheckLike(LIKE_ACTIVE_STATUS);
             likeTable.setBoardId(boardId);
             likeTable.setMemberEmail(memberEmail);
-            likeBoard.setLikeCnt(likeBoard.getLikeCnt() + 1);
-        } else if (likeTable.getCheckLike() == LIKE_CANCEL_STATUS) {
 
-            likeTable.setCheckLike(LIKE_ACTIVE_STATUS);
-            likeBoard.setLikeCnt(likeBoard.getLikeCnt() + 1);
-        } else if (likeTable.getCheckLike() == LIKE_ACTIVE_STATUS) {
-
-            likeTable.setCheckLike(LIKE_CANCEL_STATUS);
-            likeBoard.setLikeCnt(likeBoard.getLikeCnt() - 1);
-            result = 1;
-        } else {
+            processLike(likeTable, LIKE_ACTIVE_STATUS, likeBoard, 1);
+        }
+        else if (likeTable.getCheckLike() == LIKE_CANCEL_STATUS) {
+            processLike(likeTable, LIKE_ACTIVE_STATUS, likeBoard, 1);
+        }
+        else if (likeTable.getCheckLike() == LIKE_ACTIVE_STATUS) {
+            processLike(likeTable, LIKE_CANCEL_STATUS, likeBoard, -1);
+            likeStatus = 1;
+        }
+        else {
             throw new InvalidInputException("잘못된 접근입니다.");
         }
 
         boardRepository.save(likeBoard);
         likeRepository.save(likeTable);
 
-        return result;
+        return likeStatus;
     }
 
+    private void processLike(LikeTable likeTable, int likeStatus, Board likeBoard, int variation) {
+        likeTable.setCheckLike(likeStatus);
+        likeBoard.setLikeCnt(likeBoard.getLikeCnt() + variation);
+    }
 }

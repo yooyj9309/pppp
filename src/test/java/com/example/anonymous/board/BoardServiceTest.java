@@ -1,6 +1,8 @@
 package com.example.anonymous.board;
 
 import com.example.anonymous.domain.Board;
+import com.example.anonymous.domain.LikeTable;
+import com.example.anonymous.exception.InvalidInputException;
 import com.example.anonymous.member.MemberServiceTest;
 import com.example.anonymous.repository.BoardRepository;
 import com.example.anonymous.service.BoardService;
@@ -60,6 +62,16 @@ public class BoardServiceTest {
         for(Board board:boardList){
             log.info(board.getBoardId() + " 번 게시물");
         }
+    }
 
+    @Test
+    public void likeTest(){
+        try {
+            boardService.processLikeByBoardIdAndMemberEmail(2, "da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
+        }catch (InvalidInputException e){
+            assertEquals(e.getMessage(),"잘못된(존재하지 않은) 게시글 접근 입니다.");
+        }
+        int returnType = boardService.processLikeByBoardIdAndMemberEmail(22, "da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
+        assertEquals(returnType,0);
     }
 }
