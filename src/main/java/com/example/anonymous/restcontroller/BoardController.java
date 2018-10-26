@@ -32,63 +32,71 @@ public class BoardController {
     ReplyService replyService;
 
     @GetMapping(value = "/boardList")
-    public List<Board> getBoardList(@RequestParam("boardId") long boardId, @RequestParam("type") String type) {
-        LOGGER.info(boardId+" 요청");
+    public List<Board> getBoardList(@RequestParam("boardId") long boardId, @RequestParam("type") String type, Principal principal) {
+        LOGGER.info(boardId + " 요청");
 
-        List<Board> boardList = boardService.getBoardList(boardId,type);
+        List<Board> boardList = boardService.getBoardList(boardId, type, principal.getName());
         return boardList;
     }
 
     @PostMapping(value = "/main")
     public ResponseEntity<String> insertBoardContent(Board board, Principal principal) {
 
-        boardService.registerBoardService(board,principal);
+        boardService.registerBoardService(board, principal);
 
-        return new ResponseEntity<String>("게시글을 등록하였습니다.",HttpStatus.OK);
+        return new ResponseEntity<String>("게시글을 등록하였습니다.", HttpStatus.OK);
     }
 
     @GetMapping(value = "main/{boardId}")
-    public ModelAndView getDetailView(@PathVariable("boardId") long boardId) {
-        LOGGER.info(boardId+"번 게시판 상세보기");
+    public ModelAndView getDetailView(@PathVariable("boardId") long boardId, HttpSession session) {
+        LOGGER.info(boardId + "번 게시판 상세보기");
 
         ModelAndView mav = new ModelAndView();
         Board board = boardService.getBoardById(boardId);
+
+        board.setViewCnt(board.getViewCnt() + 1);
+        boardRepository.save(board);
         LOGGER.info(board.toString());
         mav.setViewName("view");
-        mav.addObject("board",board);
-        mav.addObject("member",board.getMember());
+        mav.addObject("board", board);
         return mav;
     }
 
     @PostMapping(value = "main/{boardId}")
-    public ResponseEntity<String> updateBoard(@PathVariable("boardId") long boardId, Board inputBoard,Principal principal) {
-        LOGGER.info(boardId+"번 게시판 수정하기");
+    public ResponseEntity<String> updateBoard(@PathVariable("boardId") long boardId, Board inputBoard, Principal principal) {
+        LOGGER.info(boardId + "번 게시판 수정하기");
         LOGGER.info(inputBoard.toString());
 
-        boardService.updateBoardById(boardId,inputBoard, principal);
-        return new ResponseEntity<String>("게시글을 수정하였습니다.",HttpStatus.OK);
+        boardService.updateBoardById(boardId, inputBoard, principal);
+        return new ResponseEntity<String>("게시글을 수정하였습니다.", HttpStatus.OK);
     }
 
     @DeleteMapping(value = "main/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable("boardId") long boardId, Principal principal) {
-        LOGGER.info(boardId+"번 게시판 삭제하기");
-        boardService.deleteBoardById(boardId,principal);
+        LOGGER.info(boardId + "번 게시판 삭제하기");
+        boardService.deleteBoardById(boardId, principal);
 
-        return new ResponseEntity<String>("게시글을 삭제하였습니다.",HttpStatus.OK);
+        return new ResponseEntity<String>("게시글을 삭제하였습니다.", HttpStatus.OK);
     }
 
 
-
     @GetMapping(value = "dashboard")
-    public ModelAndView getDashBoardView(ModelAndView mav,Principal principal){
+    public ModelAndView getDashBoardView(ModelAndView mav, Principal principal) {
         List<Board> boardListByMemberEmail = boardService.getBoardListByMemberEmail(principal.getName());
         List<Reply> replyListByMemberEmail = replyService.getReplyListByMemberEmail(principal.getName());
 
-        mav.addObject("boardList",boardListByMemberEmail);
+        mav.addObject("boardList", boardListByMemberEmail);
         mav.addObject("replyList", replyListByMemberEmail);
 
         mav.setViewName("dashboard");
 
         return mav;
     }
+
+    @PostMapping(value = "main/like")
+    public int processLike(@RequestParam long boardId,Principal principal) {
+
+        return boardService.processLikeByBoardIdAndMemberEmail(boardId,principal.getName());
+    }
+
 }

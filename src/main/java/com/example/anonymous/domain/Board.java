@@ -69,4 +69,9 @@ public class Board {
     @Transient
     private MultipartFile imgFile;
 
+    @Transient
+    private int commentCnt;
+
+    @Transient
+    private int likeStatus;
 }

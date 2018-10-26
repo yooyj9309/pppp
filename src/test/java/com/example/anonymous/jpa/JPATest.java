@@ -1,13 +1,16 @@
 package com.example.anonymous.jpa;
 
 import com.example.anonymous.domain.Board;
+import com.example.anonymous.domain.LikeTable;
 import com.example.anonymous.domain.Member;
 import com.example.anonymous.domain.Reply;
 import com.example.anonymous.repository.BoardRepository;
+import com.example.anonymous.repository.LikeRepository;
 import com.example.anonymous.repository.MemberRepository;
 
 import com.example.anonymous.repository.ReplyRepository;
 
+import com.example.anonymous.service.BoardService;
 import com.example.anonymous.service.MemberService;
 import com.example.anonymous.service.ReplyService;
 import org.junit.Test;
@@ -43,10 +46,16 @@ public class JPATest {
     ReplyRepository replyRepository;
 
     @Autowired
+    LikeRepository likeRepository;
+
+    @Autowired
     ReplyService replyService;
 
     @Autowired
     MemberService memberService;
+
+    @Autowired
+    BoardService boardService;
 
     @Test
     public void insertTest() {
@@ -109,9 +118,18 @@ public class JPATest {
     }
     @Test
     public void randomNameTest(){
-
         for(int i=0;i<10;i++) {
-            LOGGER.info(memberService.randomName());
+            LOGGER.info(memberService.getRandomName());
         }
     }
+
+    @Test
+    public void likeTest(){
+        LikeTable lt = likeRepository.findByBoardIdAndMemberEmail(10,"sdf");
+        if(lt == null){
+            LOGGER.info("null");
+        }
+    }
+
+
 }

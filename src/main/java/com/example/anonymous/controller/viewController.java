@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.servlet.http.HttpSession;
 import java.security.Principal;
 
 
@@ -31,7 +33,7 @@ public class viewController {
     }
 
     @GetMapping("main")
-    public ModelAndView getMainView(Principal principal) {
+    public ModelAndView getMainView(Principal principal, HttpSession session) {
         ModelAndView mav = new ModelAndView();
         String nick = memberRepository.findMemberByMemberEmail(principal.getName()).getMemberNick();
 

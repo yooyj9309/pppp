@@ -15,4 +15,6 @@ public interface ReplyRepository extends PagingAndSortingRepository<Reply, Long>
     List<Reply> findAllByReplyParentId(long parentId, Pageable request);
 
     List<Reply> findAllBySessionEmail(String memberEmail);
+
+    List<Reply> findAllByBoardBoardId(long boardId);
 }

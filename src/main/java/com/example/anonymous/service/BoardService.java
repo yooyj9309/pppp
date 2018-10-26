@@ -1,12 +1,15 @@
 package com.example.anonymous.service;
 
 import com.example.anonymous.domain.Board;
+import com.example.anonymous.domain.LikeTable;
 import com.example.anonymous.domain.Member;
 import com.example.anonymous.exception.InvalidInputException;
 import com.example.anonymous.exception.NoAuthException;
 import com.example.anonymous.exception.ServerException;
 import com.example.anonymous.repository.BoardRepository;
+import com.example.anonymous.repository.LikeRepository;
 import com.example.anonymous.repository.MemberRepository;
+import com.example.anonymous.repository.ReplyRepository;
 import com.example.anonymous.utils.ImgUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.security.Principal;
 import java.util.Date;
@@ -48,12 +50,18 @@ public class BoardService {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    ReplyRepository replyRepository;
+
+    @Autowired
+    LikeRepository likeRepository;
+
     public void registerBoardService(Board boardInfo, Principal principal) {
 
         Member authorMember = null;
-        try{
-            authorMember =  memberRepository.findMemberByMemberEmail(principal.getName());
-        }catch (DataAccessException e){
+        try {
+            authorMember = memberRepository.findMemberByMemberEmail(principal.getName());
+        } catch (DataAccessException e) {
             throw new NoAuthException("게시글 작성할 권한이 없습니다.");
         }
 
@@ -126,7 +134,7 @@ public class BoardService {
         return board;
     }
 
-    public List<Board> getBoardList(long scrollSign, String scrollingType) {
+    public List<Board> getBoardList(long scrollSign, String scrollingType, String memberEmail) {
         Pageable request = new PageRequest(0, ONE_PAGE_SIZE, Sort.Direction.DESC, "boardRegDate");
         List<Board> responseList = null;
 
@@ -136,17 +144,33 @@ public class BoardService {
             } else {
                 responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdLessThan(DELETED_BOARD, scrollSign, request);
             }
-        } else if(scrollingType.equals("up")){
-            if(scrollSign == FIRST_BOARD_SIGN){
+        } else if (scrollingType.equals("up")) {
+            if (scrollSign == FIRST_BOARD_SIGN) {
                 throw new InvalidInputException("맨 처음 게시판 입니다.");
-            }else{
+            } else {
                 responseList = boardRepository.findAllByBoardStatusLessThanAndBoardIdGreaterThan(DELETED_BOARD, scrollSign, request);
             }
         }
+
+        for (Board response : responseList) {
+            int commentSize = replyRepository.findAllByBoardBoardId(response.getBoardId()).size();
+            if (commentSize > 0) {
+                response.setCommentCnt(commentSize);
+            }
+
+            LikeTable likeInfo = likeRepository.findByBoardIdAndMemberEmail(response.getBoardId(), memberEmail);
+            //좋아요를 누른 적이 없거나 좋아요 취소를 할때
+            if (likeInfo == null || likeInfo.getCheckLike() == 0) {
+                response.setLikeStatus(0);
+            } else if (likeInfo.getCheckLike() == 1) { // 좋아요를 이미 누른 상태일 때
+                response.setLikeStatus(1);
+            }
+        }
+
         return responseList;
     }
 
-    public void updateBoardById(long boardId, Board inputBoard,Principal principal) {
+    public void updateBoardById(long boardId, Board inputBoard, Principal principal) {
         Board board = boardRepository.findBoardByBoardId(boardId);
         String subject = inputBoard.getBoardSubject();
         String contents = inputBoard.getBoardContents();
@@ -198,7 +222,7 @@ public class BoardService {
         Member authorMember = deletedBoard.getMember();
 
         //게시자와 현재 사용자의 이름이 다를 때
-        if(!authorMember.getMemberEmail().equals(principal.getName())){
+        if (!authorMember.getMemberEmail().equals(principal.getName())) {
             throw new NoAuthException("게시글 삭제할 권한이 없습니다.");
         }
         try {
@@ -211,10 +235,38 @@ public class BoardService {
         }
     }
 
-    public List<Board> getBoardListByMemberEmail(String memberEmail){
+    public List<Board> getBoardListByMemberEmail(String memberEmail) {
         List<Board> boardListByMemberEmail = boardRepository.findAllByMemberMemberEmail(memberEmail);
         return boardListByMemberEmail;
     }
 
+    public int processLikeByBoardIdAndMemberEmail(long boardId, String memberEmail) {
+        LikeTable likeTable = likeRepository.findByBoardIdAndMemberEmail(boardId, memberEmail);
+        Board likeBoard = boardRepository.findBoardByBoardId(boardId);
+        int result = 0;
+
+        if (likeTable == null) {
+            likeTable = new LikeTable();
+
+            likeTable.setCheckLike(1);
+            likeTable.setBoardId(boardId);
+            likeTable.setMemberEmail(memberEmail);
+            likeBoard.setLikeCnt(likeBoard.getLikeCnt() + 1);
+        }else if (likeTable.getCheckLike() == 0) {
+            likeTable.setCheckLike(1);
+            likeBoard.setLikeCnt(likeBoard.getLikeCnt() + 1);
+        }else if(likeTable.getCheckLike() == 1){
+            likeTable.setCheckLike(0);
+            likeBoard.setLikeCnt(likeBoard.getLikeCnt() - 1);
+            result = 1;
+        }else {
+            throw new InvalidInputException("잘못된 접근입니다.");
+        }
+
+        boardRepository.save(likeBoard);
+        likeRepository.save(likeTable);
+
+        return result;
+    }
 
 }

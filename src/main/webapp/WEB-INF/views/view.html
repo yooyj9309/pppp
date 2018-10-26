@@ -73,7 +73,9 @@
                     <textarea style="resize:none;overflow:auto" th:text="${board.boardContents}" readonly="readonly" cols="70" rows="12"></textarea>
                 </div>
             </div>
-            작성자 : <label th:text="${board.member.memberNick}"></label>
+            작성자 : <label th:text="${board.memberNick}"></label>
+            &nbsp;&nbsp;&nbsp;&nbsp;조회수 : <label th:text="${board.viewCnt}"></label>
+            &nbsp;&nbsp;&nbsp;&nbsp;좋아요 수 : <label th:text="${board.likeCnt}"></label>
             <p th:switch="${board.boardStatus}">
                 <label th:case="0">생성 일 : <label
                         th:text="${#dates.format(board.boardModDate, 'yyyy/MM/dd')}"></label></label>
