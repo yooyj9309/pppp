@@ -1,5 +1,6 @@
 package com.example.anonymous.domain;
 
+import com.example.anonymous.status.MailCheck;
 import com.example.anonymous.status.MemberStatus;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,7 +33,10 @@ public class Member {
     private String memberNick;
 
     @Enumerated(EnumType.STRING)
-    private MemberStatus memberCheck;
+    private MemberStatus memberStatus;
+
+    @Enumerated(EnumType.STRING)
+    private MailCheck mailCheck;
 
     @Column(name = "memberRegDate", updatable=false)
     @CreationTimestamp

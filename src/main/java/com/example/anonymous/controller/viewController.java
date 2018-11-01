@@ -26,13 +26,13 @@ public class viewController {
 
     @GetMapping(value = "login")
     public String getLoginView(Model model) {
-        //String randomNick = memberService.getRandomName();
-       // model.addAttribute("nick",randomNick);
+        String randomNick = memberService.getRandomName();
+        model.addAttribute("nick",randomNick);
         return "login";
     }
-/*
+
     @GetMapping("main")
-    public ModelAndView getMainView(Principal principal, HttpSession session) {
+    public ModelAndView getMainView(Principal principal) {
         ModelAndView mav = new ModelAndView();
         String nick = memberRepository.findMemberByMemberEmail(principal.getName()).getMemberNick();
 
@@ -40,12 +40,13 @@ public class viewController {
         mav.setViewName("main");
         return mav;
     }
-    @GetMapping(value = "emailConfirm")
+
+    @GetMapping(value = "email_confirm")
     public String confirmEmail(String userEmail, String key, Model model) {
         memberService.updateAuth(userEmail, key);
         model.addAttribute("msg","이메일 인증에 성공 하셨습니다.");
         return "login";
     }
-*/
+
 }
 

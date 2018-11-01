@@ -35,7 +35,7 @@ public class MemberServiceTest {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     private static final Logger log = LoggerFactory.getLogger(MemberServiceTest.class);
-
+/*
     @Test
     public void signUpTest() {
         Member member = new Member();
@@ -73,5 +73,5 @@ public class MemberServiceTest {
         }
         log.info("Not Duplicate");
     }
-
+*/
 }

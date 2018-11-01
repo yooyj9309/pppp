@@ -91,7 +91,8 @@ $(document).ready(function() {
                 location.href="/login";
             },
             error : function(response) {
-                alert(response.responseText);
+                console.log(response);
+                alert(response.responseJSON.errors[0].defaultMessage);
             }
         });
 

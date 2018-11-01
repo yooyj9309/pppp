@@ -1,10 +1,13 @@
 package com.example.anonymous.service;
 
+import com.example.anonymous.DTO.MemberDTO;
 import com.example.anonymous.domain.Member;
 import com.example.anonymous.exception.InvalidInputException;
 import com.example.anonymous.exception.NoAuthException;
 import com.example.anonymous.exception.ServerException;
 import com.example.anonymous.repository.MemberRepository;
+import com.example.anonymous.status.MailCheck;
+import com.example.anonymous.status.MemberStatus;
 import com.example.anonymous.utils.MailHandler;
 import com.example.anonymous.utils.SecurityUtil;
 import com.example.anonymous.utils.TempKey;
@@ -32,56 +35,33 @@ public class MemberService {
     @Autowired
     private JavaMailSender mailSender;
 
-    private static final int DELETED_MEMBER_STATUS = 2;
-
-    private static final int EMAIL_CHECK = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(MemberService.class);
-/*
+
     @Transactional
-    public void insertMember(Member member) {
-        String email = member.getMemberEmail();
-        String pw = member.getMemberPw();
-        String pwCheck = member.getMemberPwCheck();
-        String nick = member.getMemberNick();
-        String encryptEmail = SecurityUtil.encryptSHA256(email);
+    public void insertMember(MemberDTO memberDTO) {
+        String encryptEmail = SecurityUtil.encryptSHA256(memberDTO.getMemberEmail());
+        String nickName = memberDTO.getMemberNick();
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        Member newMember = memberRepository.findMemberByMemberEmail(encryptEmail);
 
-        //사용자 입력 값이 null일 때
-        if (StringUtils.isEmpty(email) || StringUtils.isEmpty(pw) || StringUtils.isEmpty(pwCheck) || StringUtils.isEmpty(nick)) {
-            throw new InvalidInputException("입력 값을 제대로 입력해주세요");
-        }
-
-        //비밀번호와 체크가 다를 때
-        if (!pw.equals(pwCheck)) {
+        if (!memberDTO.isCheckPassword()) {
             throw new InvalidInputException("비밀 번호가 다릅니다.");
         }
 
-        //이미 존재하는 이메일인 경우
-        //matches를 사용하는 경우 list iterator를 사용해야 하기 때문에 단일 hash로 구현하기
-        if (memberRepository.findMemberByMemberEmail(encryptEmail) != null && memberRepository.findMemberByMemberEmail(encryptEmail).getMemberCheck()!= DELETED_MEMBER_STATUS) {
+        if (newMember != null && newMember.getMemberStatus() != MemberStatus.DELETED) {
             throw new InvalidInputException("이미 가입한 메일입니다.");
         }
 
-        //이미 닉네임이 있다면
-        if (memberRepository.findMemberByMemberNick(nick) != null) {
-            LOGGER.error(memberRepository.findMemberByMemberNick(nick).getMemberNick() + " 이 존재 합니다.");
+        if (memberRepository.findMemberNickByMemberNick(nickName) != null) {
             throw new InvalidInputException("이미 존재하는 닉네임입니다.");
         }
 
         String key = new TempKey().getKey(50, false);
+        newMember = memberDTO.toEntity(key);
+        memberRepository.save(newMember);
 
-        member.setMemberEmail(encryptEmail);
-        member.setMemberPw(encoder.encode(member.getMemberPw()));
-        member.setEmailKey(key);
-        member.setMemberNick(nick);
-
-        LOGGER.info(member.toString());
-
-        memberRepository.save(member);
-        LOGGER.info("Sign UP Member");
-
-        sendMail(email, key);
+        LOGGER.info("데이터 베이스 저장 및 이메일 인증 요청");
+        sendMail(memberDTO.getMemberEmail(), key);
     }
 
     private void sendMail(String email, String key) {
@@ -90,7 +70,7 @@ public class MemberService {
             mailHandler.setSubject("[익명 게시판 이메일 인증입니다.]");
             mailHandler.setText(new StringBuffer()
                     .append("<h1>메일인증</h1>")
-                    .append("<a href='http://localhost:8080/emailConfirm?userEmail=")
+                    .append("<a href='http://localhost:8080/email_confirm?userEmail=")
                     .append(email)
                     .append("&key=")
                     .append(key)
@@ -110,23 +90,31 @@ public class MemberService {
         }
     }
 
+    /**
+     * URL 파라미터 값으로 접근되기에 이메일 확인 요청에 대한 파라미터의
+     * 타당성을 판단하는 예외처리가 필요.
+     *
+     * @param email
+     * @param key
+     */
     public void updateAuth(String email, String key) {
         if(StringUtils.isEmpty(email))
             throw new InvalidInputException("잘못된 입력 값입니다.");
         email = SecurityUtil.encryptSHA256(email);
 
         Member member = memberRepository.findMemberByMemberEmail(email);
+
         if(member == null) {
-            throw new NoAuthException("잘못된 접근 입니다.");
+            throw new NoAuthException("해당 멤버가 없습니다.");
         }
         if (!member.getEmailKey().equals(key)) {
-            throw new NoAuthException("잘못된 접근입니다.");
+            throw new NoAuthException("잘못된 키로 접근하였습니다.");
         }
 
-        member.setMemberCheck(EMAIL_CHECK);
+        member.setMailCheck(MailCheck.OK);
         memberRepository.save(member);
     }
-
+/*
     public void changNickName(String nickName,String sessionEmail){
         if(StringUtils.isEmpty(nickName)){
             throw new InvalidInputException("닉네임을 입력해주세요");
@@ -170,7 +158,7 @@ public class MemberService {
         member.setMemberCheck(DELETED_MEMBER_STATUS);
         memberRepository.save(member);
     }
-
+*/
     public String getRandomName(){
         final int leastNameSize = 4;
         final int MAX_NAME_SIZE = 12;
@@ -184,4 +172,4 @@ public class MemberService {
         }
         return randomName.toString();
     }
-*/}
+}
