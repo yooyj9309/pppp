@@ -24,7 +24,7 @@ repositories {
     mavenCentral()
 }
 
-ext['hibernate.version'] = '5.2.11.Final'
+
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
@@ -35,8 +35,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile 'org.springframework.boot:spring-boot-starter-mail'
     compile "org.springframework:spring-context-support"
-    compile group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
-    compile('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
+
     compileOnly('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }

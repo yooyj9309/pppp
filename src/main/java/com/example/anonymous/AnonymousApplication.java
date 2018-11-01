@@ -44,7 +44,7 @@ public class AnonymousApplication {
     @Bean
     public ThymeleafViewResolver viewResolver(){
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
-        viewResolver.setCharacterEncoding("UTF-8"); // 한글 깨짐 방지
+        viewResolver.setCharacterEncoding("UTF-8"); 
         viewResolver.setTemplateEngine(templateEngine());
 
         return viewResolver;

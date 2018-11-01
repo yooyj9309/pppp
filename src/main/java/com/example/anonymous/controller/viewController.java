@@ -26,11 +26,11 @@ public class viewController {
 
     @GetMapping(value = "login")
     public String getLoginView(Model model) {
-        String randomNick = memberService.getRandomName();
-        model.addAttribute("nick",randomNick);
+        //String randomNick = memberService.getRandomName();
+       // model.addAttribute("nick",randomNick);
         return "login";
     }
-
+/*
     @GetMapping("main")
     public ModelAndView getMainView(Principal principal, HttpSession session) {
         ModelAndView mav = new ModelAndView();
@@ -46,6 +46,6 @@ public class viewController {
         model.addAttribute("msg","이메일 인증에 성공 하셨습니다.");
         return "login";
     }
-
+*/
 }
 

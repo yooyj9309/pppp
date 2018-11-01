@@ -21,7 +21,7 @@ public class ReplyController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReplyController.class);
     @Autowired
     ReplyService replyService;
-
+/*
     @GetMapping(value="/list")
     public List<Reply> sendReplyList(@RequestParam("boardId") long boardId, @RequestParam("page") int page) {
         List<Reply> replyList = replyService.getReplyListByBoardId(boardId, page);
@@ -64,5 +64,5 @@ public class ReplyController {
     @GetMapping(value = "/comment")
     public List<Reply> sendCommentList(@RequestParam long replyId){
         return replyService.getAllCommentListByReplyId(replyId);
-    }
+    }*/
 }

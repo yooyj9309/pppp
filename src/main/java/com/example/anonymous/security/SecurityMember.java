@@ -20,7 +20,7 @@ public class SecurityMember extends User {
 
     public SecurityMember(Member member) {
         super(member.getMemberEmail(), member.getMemberPw(), makeGrantedAuthority(member.getMemberRoles()));
-        this.emailCheck=member.getMemberCheck();
+       // this.emailCheck=member.getMemberCheck();
     }
 
     private static List<GrantedAuthority> makeGrantedAuthority(List<MemberRole> roles){

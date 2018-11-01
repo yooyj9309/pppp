@@ -30,7 +30,7 @@ public class BoardController {
 
     @Autowired
     ReplyService replyService;
-
+/*
     @GetMapping(value = "/boardList")
     public List<Board> getBoardList(@RequestParam("boardId") long boardId, @RequestParam("type") String type, Principal principal) {
         LOGGER.info(boardId + " 요청");
@@ -98,5 +98,5 @@ public class BoardController {
 
         return boardService.processLikeByBoardIdAndMemberEmail(boardId,principal.getName());
     }
-
+*/
 }

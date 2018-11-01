@@ -70,9 +70,14 @@ public class JPATest {
 
     @Test
     public void queryTest(){
-        Pageable request = new PageRequest(0,10, Sort.Direction.DESC,"boardRegDate");
-
+        Pageable request = new PageRequest(0,5, Sort.Direction.DESC,"boardRegDate");
+        Pageable request1 = new PageRequest(1,5, Sort.Direction.DESC,"boardRegDate");
         Collection<Board> boards = boardRepository.findAllByBoardStatusLessThanAndBoardIdLessThan(2,76L,request);
+        for(Board board : boards){
+            LOGGER.info(board.toString());
+        }
+
+        boards = boardRepository.findAllByBoardStatusLessThanAndBoardIdLessThan(2,76L,request1);
         for(Board board : boards){
             LOGGER.info(board.toString());
         }

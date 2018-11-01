@@ -10,6 +10,7 @@ import com.example.anonymous.repository.BoardRepository;
 import com.example.anonymous.repository.LikeRepository;
 import com.example.anonymous.repository.MemberRepository;
 import com.example.anonymous.repository.ReplyRepository;
+import com.example.anonymous.restcontroller.BoardController;
 import com.example.anonymous.utils.ImgUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class BoardService {
 
     @Autowired
     LikeRepository likeRepository;
-
+/*
     public void registerBoardService(Board boardInfo, Principal principal) {
         Member authorMember = null;
         try {
@@ -137,7 +138,8 @@ public class BoardService {
     }
 
     public List<Board> getBoardList(long scrollSign, String scrollingType, String memberEmail) {
-        Pageable request = new PageRequest(0, ONE_PAGE_SIZE, Sort.Direction.DESC, "boardRegDate");
+        Pageable request = new PageRequest(0, ONE_PAGE_SIZE, Sort.Direction.DESC,
+                "boardRegDate");
         List<Board> responseList = null;
 
         if (scrollingType.equals("down")) {
@@ -286,4 +288,5 @@ public class BoardService {
         likeTable.setCheckLike(likeStatus);
         likeBoard.setLikeCnt(likeBoard.getLikeCnt() + variation);
     }
+    */
 }

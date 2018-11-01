@@ -1,60 +1,60 @@
 package com.example.anonymous.domain;
 
+import com.example.anonymous.status.MemberStatus;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
+@EqualsAndHashCode(of = "memberId")
+
 @Entity
-@EqualsAndHashCode(of = "memberEmail")
-@ToString(exclude = "boards")
+@Table(name = "MEMBER")
 public class Member {
 
-    // 이메일
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long memberId;
+
     @Column(nullable = false, unique = true, length=100)
     private String memberEmail;
 
-    // 비밀 번호
     @Column(nullable = false, length=100)
     private String memberPw;
 
-    // 비밀번호 확인
-    @Transient
-    private String memberPwCheck;
-
-    // 닉네임
     @Column(nullable = false, unique = true, length=100)
     private String memberNick;
 
-    // 이메일 인증
-    @Column(length=2, columnDefinition = "int default 0")
-    private int memberCheck;
+    @Enumerated(EnumType.STRING)
+    private MemberStatus memberCheck;
 
-    // 회원 등록일
     @Column(name = "memberRegDate", updatable=false)
     @CreationTimestamp
     private Date memberRegDate;
 
-    // 정보 수정일
     @Column(name = "memberModDate")
     private Date memberModDate;
 
     @OneToMany(mappedBy = "member")
-    private List<Board> boards;
+    private List<Board> boardList = new ArrayList<>();
 
-    //이메일 인증 키
+    @OneToMany(mappedBy = "member")
+    private List<Reply> replyList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<LikeTable> likeTableList = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name="memberId")
+    private List<MemberRole> memberRoles;
+
     @Column(nullable = false, unique = true, length=100)
     private String emailKey;
-
-    // 회원 상태 코드
-    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinColumn(name="memberEmail")
-    private List<MemberRole> memberRoles;
 
 }

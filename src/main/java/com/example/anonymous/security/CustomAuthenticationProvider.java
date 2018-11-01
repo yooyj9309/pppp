@@ -34,7 +34,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-
+/*
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -61,5 +61,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         logger.info(user.toString());
         logger.info("로그인 성공");
         return new UsernamePasswordAuthenticationToken(user, password, authorities);
+    */
+    return null;
     }
 }

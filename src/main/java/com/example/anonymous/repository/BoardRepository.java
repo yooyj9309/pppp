@@ -8,13 +8,5 @@ import java.util.List;
 
 
 public interface BoardRepository extends PagingAndSortingRepository<Board, Long> {
-    Board findBoardByBoardId(Long boardId);
 
-    List<Board> findAllByBoardStatusLessThan(int boardStatus, Pageable request);
-
-    List<Board> findAllByBoardStatusLessThanAndBoardIdLessThan(int boardStatus, long boardId, Pageable request);
-
-    List<Board> findAllByBoardStatusLessThanAndBoardIdGreaterThan(int boardStatus, long boardId, Pageable request);
-
-    List<Board> findAllByMemberMemberEmail(String memberEmail);
 }

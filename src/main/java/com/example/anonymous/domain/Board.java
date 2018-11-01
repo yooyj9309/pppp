@@ -1,77 +1,78 @@
 package com.example.anonymous.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import com.example.anonymous.status.BoardStatus;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
-@Entity
 @EqualsAndHashCode(of = "boardId")
-@ToString(exclude = "replies")
+
+@Entity
+@Table(name = "BOARD")
 public class Board {
     // 게시판 ID
     @Id
-    @Column(name = "boardId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long  boardId;
 
     @Column(length = 500, nullable = false)
     private String boardSubject;
 
-    @Column(columnDefinition = "TEXT", length=2000)
     // 게시판 내용
+    @Column(columnDefinition = "TEXT", length=2000)
     private String boardContents;
 
-    @Column(nullable = false, unique = true, length=2000)
     // 파일 주소
+    @Column(nullable = false, unique = true, length=2000)
     private String filePath;
 
     @Column(name = "boardRegDate", updatable=false)
     @CreationTimestamp
-    // 등록 시간
     private Date boardRegDate ;
 
     @Column(name = "boardModDate")
-    // 수정 시간
     private Date boardModDate ;
 
-    @Column( length=20, columnDefinition = "int default 0")
-    // 좋아요 수
+    @Column(length=20, columnDefinition = "int default 0")
     private int likeCnt;
 
-    @Column(length=2, columnDefinition = "int default 0")
-    // 게시판 상태 코드
-    private int boardStatus;
+    @Enumerated(EnumType.STRING)
+    private BoardStatus boardStatus;
 
-    @Column( length=20, columnDefinition = "int default 0")
-    // 조회 수
+    @Column(length=20, columnDefinition = "int default 0")
     private int viewCnt;
 
-    @JsonIgnore
-    @ManyToOne
-    private Member member;
-
-    @Column(nullable = false, length=100)
-    private String memberNick;
-
-    @Column(nullable = false,  length=100)
-    private String sessionEmail;
-
-    @OneToMany(mappedBy = "board")
-    private List<Reply> replies;
-
-    @Transient
-    private MultipartFile imgFile;
-
-    @Transient
+    @Column(length=20, columnDefinition = "int default 0")
     private int commentCnt;
 
-    @Transient
-    private int likeStatus;
+    @ManyToOne
+    @JoinColumn(name = "memberId")
+    private Member member;
+
+    @OneToMany(mappedBy ="board")
+    private List<Reply> replyList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board")
+    private List<LikeTable> likeTableList = new ArrayList<>();
+
+
+    public void setMember(Member member){
+        if(this.member!=null){
+            this.member.getBoardList().remove(this);
+        }
+        this.member = member;
+        member.getBoardList().add(this);
+    }
 }

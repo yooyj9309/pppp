@@ -1,5 +1,6 @@
 package com.example.anonymous.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,20 +8,37 @@ import javax.persistence.*;
 
 @Getter
 @Setter
+@EqualsAndHashCode(of = "likeId")
+
 @Entity
 public class LikeTable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private long id;
+    private long likeId;
 
-    @Column(nullable = false, length=100)
-    private String memberEmail;
+    @ManyToOne
+    @JoinColumn(name = "memberId")
+    private Member member;
 
+    @ManyToOne
+    @JoinColumn(name = "boardId")
+    private Board board;
 
-    @Column(nullable = false, name = "boardId")
-    private long  boardId;
+    //양방향 연관 관계를 위한 편의 메소드
+    public void setMember(Member member){
+        if(this.member!=null){
+            this.member.getLikeTableList().remove(this);
+        }
+        this.member = member;
+        member.getLikeTableList().add(this);
+    }
 
-    @Column(length = 1)
-    private int checkLike;
+    public void setBoard(Board board){
+        if(this.board!=null){
+            this.board.getLikeTableList().remove(this);
+        }
+        this.board = board;
+        board.getLikeTableList().add(this);
+    }
 }

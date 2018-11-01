@@ -36,14 +36,16 @@ public class BoardServiceTest {
      */
     @Test
     public void scrollDownTest(){
-        List<Board> boardList = boardService.getBoardList(18,"down","da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
+        List<Board> boardList = boardService.getBoardList(18,"down",
+                "da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
         assertEquals(boardList.size(),2);
 
         for(Board board:boardList){
             log.info(board.getBoardId() + " 번 게시물");
         }
 
-        boardList = boardService.getBoardList(23,"down","da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
+        boardList = boardService.getBoardList(23,"down",
+                "da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
         assertEquals(boardList.size(),5);
 
         for(Board board:boardList){
@@ -57,7 +59,8 @@ public class BoardServiceTest {
      */
     @Test
     public void scrollUpTest(){
-        List<Board> boardList = boardService.getBoardList(20,"up","da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
+        List<Board> boardList = boardService.getBoardList(20,
+                "up","da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
         assertEquals(boardList.size(),5);
         for(Board board:boardList){
             log.info(board.getBoardId() + " 번 게시물");
@@ -67,7 +70,8 @@ public class BoardServiceTest {
     @Test
     public void likeTest(){
         try {
-            boardService.processLikeByBoardIdAndMemberEmail(2, "da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
+            boardService.processLikeByBoardIdAndMemberEmail(2,
+                    "da9793cb05a15ffcea4f8262e99844180384faebcb76907a9a018ef0922e988f");
         }catch (InvalidInputException e){
             assertEquals(e.getMessage(),"잘못된(존재하지 않은) 게시글 접근 입니다.");
         }

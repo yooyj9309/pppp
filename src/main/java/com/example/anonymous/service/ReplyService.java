@@ -40,7 +40,7 @@ public class ReplyService {
     private MemberRepository memberRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReplyService.class);
-
+/*
     public void insertReply(Reply reply, long boardId, Principal principal) {
         String replyContents = reply.getReplyContents();
         if (StringUtils.isEmpty(replyContents)) {
@@ -128,4 +128,6 @@ public class ReplyService {
         }
         return replyListByMemberEmail;
     }
+
+    */
 }

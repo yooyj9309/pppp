@@ -20,7 +20,7 @@ public class MemberController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemberController.class);
     @Autowired
     private MemberService memberService;
-
+/*
     @PostMapping(value = "/signup")
     public ResponseEntity<String> join(Member member) {
         LOGGER.info(member.toString());
@@ -43,5 +43,5 @@ public class MemberController {
     public ResponseEntity<String> withdrawMember(Principal principal) {
         memberService.deleteMemberByMemberEmail(principal.getName());
         return new ResponseEntity<String>("회원 탈퇴 하였습니다.", HttpStatus.OK);
-    }
+    }*/
 }

@@ -36,7 +36,7 @@ public class MemberService {
 
     private static final int EMAIL_CHECK = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(MemberService.class);
-
+/*
     @Transactional
     public void insertMember(Member member) {
         String email = member.getMemberEmail();
@@ -184,4 +184,4 @@ public class MemberService {
         }
         return randomName.toString();
     }
-}
+*/}
