@@ -28,9 +28,6 @@ import java.util.Date;
 public class BoardDTO {
     private static final Logger LOGGER = LoggerFactory.getLogger(BoardDTO.class);
 
-    @Autowired
-    MemberRepository memberRepository;
-
     private long  boardId;
 
     @NotBlank(message = "제목을 입력해주세요.")
@@ -43,7 +40,7 @@ public class BoardDTO {
 
     private String filePath;
     private String writer;
-
+    private String writerEmail;
     private String boardDate;
 
     private int likeCnt;
@@ -63,7 +60,8 @@ public class BoardDTO {
         this.likeCnt = board.getLikeCnt();
         this.viewCnt = board.getViewCnt();
         this.writer = board.getWriter();
-        
+        this.writerEmail = board.getMember().getMemberEmail();
+
         this.boardDate = formatDate(board.getBoardRegDate());
     }
 
@@ -76,6 +74,15 @@ public class BoardDTO {
         board.setWriter(member.getMemberNick());
         board.setFilePath(filePath);
         board.setBoardStatus(BoardStatus.CREATED);
+
+        return board;
+    }
+
+    public Board toUpdate(Board board){
+        board.setBoardStatus(BoardStatus.UPDATED);
+        board.setBoardModDate(new Date());
+        board.setBoardSubject(this.boardSubject);
+        board.setBoardContents(this.boardContents);
 
         return board;
     }

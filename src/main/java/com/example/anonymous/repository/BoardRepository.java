@@ -16,4 +16,6 @@ public interface BoardRepository extends PagingAndSortingRepository<Board, Long>
     List<Board> findAllByBoardStatusIsNotAndBoardIdLessThan(BoardStatus boardStatus, long boardId, Pageable request);
 
     List<Board> findAllByBoardStatusIsNotAndBoardIdGreaterThan(BoardStatus boardStatus, long boardId, Pageable request);
+
+    Board findByBoardId(long boardId);
 }

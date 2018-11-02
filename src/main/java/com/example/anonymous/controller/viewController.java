@@ -1,5 +1,8 @@
 package com.example.anonymous.controller;
 
+import com.example.anonymous.DTO.BoardDTO;
+import com.example.anonymous.domain.Board;
+import com.example.anonymous.repository.BoardRepository;
 import com.example.anonymous.repository.MemberRepository;
 import com.example.anonymous.service.MemberService;
 import org.slf4j.Logger;
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -21,6 +25,9 @@ public class viewController {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private BoardRepository boardRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(viewController.class);
 
@@ -48,5 +55,12 @@ public class viewController {
         return "login";
     }
 
+    @GetMapping(value = "board/{boardId}")
+    public String getDetailView(@PathVariable("boardId") long boardId, Model model) {
+        BoardDTO board = new BoardDTO(boardRepository.findByBoardId(boardId));
+        model.addAttribute("board",board);
+
+        return "view";
+    }
 }
 

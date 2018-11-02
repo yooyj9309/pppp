@@ -171,55 +171,25 @@ public class BoardService {
         }
         return boardList;
     }
-    /*
-    public Board getBoardById(long boardId) {
-        Board board = boardRepository.findBoardByBoardId(boardId);
-        LOGGER.info(board.toString());
-        return board;
-    }
 
-
-
-    public void updateBoardById(long boardId, Board inputBoard, Principal principal) {
-        Board board = boardRepository.findBoardByBoardId(boardId);
-        String subject = inputBoard.getBoardSubject();
-        String contents = inputBoard.getBoardContents();
-        String fileName = inputBoard.getImgFile().getOriginalFilename();
-
+    public void updateBoardById(BoardDTO inputBoard, MultipartFile updateFile, Principal principal) {
+        Board board = boardRepository.findByBoardId(inputBoard.getBoardId());
         Member authorMember = board.getMember();
+        String fileName = updateFile.getOriginalFilename();
 
-        //작가와 현재 사용자의 이름이 다른 경우
         if (!authorMember.getMemberEmail().equals(principal.getName())) {
             throw new NoAuthException("게시글 수정할 권한이 없습니다.");
-        }
-        if (StringUtils.isEmpty(subject)) {
-            throw new InvalidInputException("제목을 적어주세요.");
-        }
-        if (subject.length() > SUBJECT_MAX_LENGTH) {
-            throw new InvalidInputException("제목이 너무 깁니다.");
-        }
-        if (StringUtils.isEmpty(contents)) {
-            throw new InvalidInputException("세부사항을 입력해주세요.");
-        }
-        if (contents.length() > CONTENT_MAX_LENGTH) {
-            throw new InvalidInputException("글이 너무 깁니다.");
         }
         if (!isPhotoFile(fileName)) {
             throw new InvalidInputException("사진만 입력해주세요.");
         }
-
-        // 0: 생성됨 1: 업데이트 2:삭제
-        board.setBoardSubject(inputBoard.getBoardSubject());
-        board.setBoardContents(inputBoard.getBoardContents());
-        board.setBoardStatus(UPDATED_BOARD);
-        board.setBoardModDate(new Date());
-
-
         if (!StringUtils.isEmpty(fileName)) {
-            String filePath = ImgUtil.imgUpload("images", inputBoard.getImgFile(), fileName);
+            String filePath = ImgUtil.imgUpload("images", updateFile, fileName);
             board.setFilePath(filePath);
         }
+
         try {
+            board = inputBoard.toUpdate(board);
             boardRepository.save(board);
         } catch (DataAccessException e) {
             deletePhoto(fileName);
@@ -228,7 +198,7 @@ public class BoardService {
     }
 
     public void deleteBoardById(long boardId, Principal principal) {
-        Board deletedBoard = boardRepository.findBoardByBoardId(boardId);
+        Board deletedBoard = boardRepository.findByBoardId(boardId);
         Member authorMember = deletedBoard.getMember();
 
         //게시자와 현재 사용자의 이름이 다를 때
@@ -236,7 +206,7 @@ public class BoardService {
             throw new NoAuthException("게시글 삭제할 권한이 없습니다.");
         }
         try {
-            deletedBoard.setBoardStatus(DELETED_BOARD);
+            deletedBoard.setBoardStatus(BoardStatus.DELETED);
             deletedBoard.setBoardModDate(new Date());
 
             boardRepository.save(deletedBoard);
@@ -244,7 +214,7 @@ public class BoardService {
             throw new ServerException("게시 글 삭제 중 문제가 발생");
         }
     }
-
+/*
     public List<Board> getBoardListByMemberEmail(String memberEmail) {
         List<Board> boardListByMemberEmail = boardRepository.findAllByMemberMemberEmail(memberEmail);
         return boardListByMemberEmail;

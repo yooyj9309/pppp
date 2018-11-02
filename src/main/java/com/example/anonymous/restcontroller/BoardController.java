@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -50,31 +51,14 @@ public class BoardController {
         }
         return articleList;
     }
-/*
-    @GetMapping(value = "main/{boardId}")
-    public ModelAndView getDetailView(@PathVariable("boardId") long boardId, HttpSession session) {
-        LOGGER.info(boardId + "번 게시판 상세보기");
 
-        ModelAndView mav = new ModelAndView();
-        Board board = boardService.getBoardById(boardId);
-
-        board.setViewCnt(board.getViewCnt() + 1);
-        boardRepository.save(board);
-        LOGGER.info(board.toString());
-        mav.setViewName("view");
-        mav.addObject("board", board);
-        return mav;
-    }
-
-    @PostMapping(value = "main/{boardId}")
-    public ResponseEntity<String> updateBoard(@PathVariable("boardId") long boardId, Board inputBoard, Principal principal) {
-        LOGGER.info(boardId + "번 게시판 수정하기");
+    @PutMapping(value = "/{boardId}")
+    public void updateBoard(BoardDTO inputBoard, MultipartFile updateFile, Principal principal) {
         LOGGER.info(inputBoard.toString());
 
-        boardService.updateBoardById(boardId, inputBoard, principal);
-        return new ResponseEntity<String>("게시글을 수정하였습니다.", HttpStatus.OK);
+        boardService.updateBoardById(inputBoard,updateFile,principal);
     }
-
+/*
     @DeleteMapping(value = "main/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable("boardId") long boardId, Principal principal) {
         LOGGER.info(boardId + "번 게시판 삭제하기");

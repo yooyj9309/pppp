@@ -66,15 +66,15 @@ $(document).ready(function () {
 
         for (var i in result) {
             output += "<div class=\"card mb-4\">";
-            output += "<a href = \"main/" + result[i].boardId + "\">";
+            output += "<a href = \"board/" + result[i].boardId + "\">";
             output += "<img class=\"card-img-top\" src=\"" + result[i].filePath + "\" alt=\"이미지 로딩 중...\">";
             output += "</a>";
             output += " <div class=\"card-body\">";
-            output += "<a href = \"main/" + result[i].boardId + "\">";
+            output += "<a href = \"board/" + result[i].boardId + "\">";
             output += "<h2 class=\"card-title\">" + result[i].boardSubject + "</h2>";
             output += "</a>";
             output += "<p class=\"card-text\">" + result[i].boardContents + "</p>";
-            output += " <a type='button' href=\"/main/" + result[i].boardId + "\" class=\"btn btn-primary\">상세보기 <span class=\"badge\">"+result[i].viewCnt+"</span></a>&nbsp;&nbsp;";
+            output += " <a type='button' href=\"/board/" + result[i].boardId + "\" class=\"btn btn-primary\">상세보기 <span class=\"badge\">"+result[i].viewCnt+"</span></a>&nbsp;&nbsp;";
             output += '<a onclick="likeProcess(' + result[i].boardId + ',' + result[i].likeStatus + ');">';
 
             if (result[i].likeStatus == "UNLIKE") {

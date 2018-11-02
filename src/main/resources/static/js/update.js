@@ -44,11 +44,10 @@
          }
          if (content == "" || content == null) {
              alert("세부 사항을 입력 해주세요.");
-
          }
 
          $.ajax({
-             type : "post",
+             type : "put",
              url : boardId,
              data : formData,
              processData : false,
@@ -63,7 +62,7 @@
          });
      });
 
-     $("#deleteButton").click(function() {
+     $("#btnDelete").click(function() {
         if(confirm("게시글을 삭제하시겠습니까?")){
             $.ajax({
                 type : "delete",
