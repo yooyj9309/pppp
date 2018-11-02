@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $("#btnWrite").click(function () {
-        var formData = new FormData($("#writeForm")[0]);
+        var fileData = new FormData($("#fileForm")[0]);
 
         var subject = jQuery.trim($("#writeSubject").val());
         var content = jQuery.trim($("#writeContent").val());
@@ -17,8 +17,8 @@ $(document).ready(function () {
 
         $.ajax({
             type: "post",
-            url: "main",
-            data: formData,
+            url: "board",
+            data: fileData,
             processData: false,
             contentType: false,
             success: function (response) {

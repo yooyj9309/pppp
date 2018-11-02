@@ -21,7 +21,7 @@ import java.util.Date;
 public class MemberDTO {
 
     private long memberId;
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @NotBlank(message = "이메일을 작성해주세요.")
     @Pattern(regexp = "^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$", message = "이메일 형식이 아닙니다.")

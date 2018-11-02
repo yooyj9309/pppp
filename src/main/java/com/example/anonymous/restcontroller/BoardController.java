@@ -1,5 +1,6 @@
 package com.example.anonymous.restcontroller;
 
+import com.example.anonymous.DTO.BoardDTO;
 import com.example.anonymous.domain.Board;
 import com.example.anonymous.domain.Reply;
 import com.example.anonymous.repository.BoardRepository;
@@ -11,13 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "/board")
 public class BoardController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BoardController.class);
@@ -30,23 +34,23 @@ public class BoardController {
 
     @Autowired
     ReplyService replyService;
+
+
+    @PostMapping()
+    public void insertBoardContent(@Valid BoardDTO boardDTO, MultipartFile postFile, Principal principal) {
+       boardService.registerBoardService(boardDTO, postFile, principal);
+    }
+
+    @GetMapping(value = "/articles")
+    public List<BoardDTO> getBoardList(@RequestParam("boardId") long boardId, @RequestParam("type") String type, Principal principal) {
+        List<BoardDTO> articleList = boardService.getBoardList(boardId,type,principal);
+
+        for(BoardDTO boardDTO:articleList){
+            LOGGER.info(boardDTO.toString());
+        }
+        return articleList;
+    }
 /*
-    @GetMapping(value = "/boardList")
-    public List<Board> getBoardList(@RequestParam("boardId") long boardId, @RequestParam("type") String type, Principal principal) {
-        LOGGER.info(boardId + " 요청");
-
-        List<Board> boardList = boardService.getBoardList(boardId, type, principal.getName());
-        return boardList;
-    }
-
-    @PostMapping(value = "/main")
-    public ResponseEntity<String> insertBoardContent(Board board, Principal principal) {
-
-        boardService.registerBoardService(board, principal);
-
-        return new ResponseEntity<String>("게시글을 등록하였습니다.", HttpStatus.OK);
-    }
-
     @GetMapping(value = "main/{boardId}")
     public ModelAndView getDetailView(@PathVariable("boardId") long boardId, HttpSession session) {
         LOGGER.info(boardId + "번 게시판 상세보기");

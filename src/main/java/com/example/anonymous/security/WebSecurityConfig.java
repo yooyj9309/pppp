@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/dashboard/**").authenticated()
                 .antMatchers("/**").permitAll()
                 .and()
-                .csrf().ignoringAntMatchers("/main/**")
+                .csrf().ignoringAntMatchers("/board/**")
                 .and()
                 .csrf().ignoringAntMatchers("/reply/**")
                 .and()
@@ -55,11 +55,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationSuccessHandler successHandler() {
         return new CustomLoginSuccessHandler("/main");
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Override

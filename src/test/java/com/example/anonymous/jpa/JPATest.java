@@ -13,6 +13,7 @@ import com.example.anonymous.repository.ReplyRepository;
 import com.example.anonymous.service.BoardService;
 import com.example.anonymous.service.MemberService;
 import com.example.anonymous.service.ReplyService;
+import com.example.anonymous.status.BoardStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
 
 
 @RunWith(SpringRunner.class)
@@ -57,7 +60,11 @@ public class JPATest {
 
     @Test
     public void insertTest() {
-        memberRepository.findMemberNickByMemberNick("str");
+        Pageable request = PageRequest.of(0, 5, Sort.Direction.DESC, "boardRegDate");
+        List<Board> list = boardRepository.findAllByBoardStatusIsNot(BoardStatus.DELETED, request);
+        for(Board b:list){
+            LOGGER.info(b.toString());
+        }
     }
 
 

@@ -34,6 +34,9 @@ public class Board {
     @Column(columnDefinition = "TEXT", length=2000)
     private String boardContents;
 
+    @Column(length = 100, nullable = false)
+    private String writer;
+
     // 파일 주소
     @Column(nullable = false, unique = true, length=2000)
     private String filePath;

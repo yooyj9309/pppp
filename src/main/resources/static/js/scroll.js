@@ -20,7 +20,7 @@ $(document).ready(function () {
     function getUpdatedBoardList() {
         $.ajax({
             type: "get",
-            url: "boardList/?boardId=" + firstBoard + "&type=up",
+            url: "board/articles/?boardId=" + firstBoard + "&type=up",
             success: function (result) {
                 console.log(result);
                 if (result.length != 0) {
@@ -40,7 +40,7 @@ $(document).ready(function () {
         console.log(lastBoard);
         $.ajax({
             type: "get",
-            url: "boardList/?boardId=" + lastBoard + "&type=down",
+            url: "board/articles/?boardId=" + lastBoard + "&type=down",
             success: function (result) {
                 console.log(result);
                 if (check) {
@@ -77,9 +77,7 @@ $(document).ready(function () {
             output += " <a type='button' href=\"/main/" + result[i].boardId + "\" class=\"btn btn-primary\">상세보기 <span class=\"badge\">"+result[i].viewCnt+"</span></a>&nbsp;&nbsp;";
             output += '<a onclick="likeProcess(' + result[i].boardId + ',' + result[i].likeStatus + ');">';
 
-            console.log(result[i].likeStatus);
-
-            if (result[i].likeStatus == 0) {
+            if (result[i].likeStatus == "UNLIKE") {
                 output += '<img src = "images/noheart.png" id="like' + result[i].boardId + '">';
             }else{
                 output += '<img src = "images/heart.png" id="like' + result[i].boardId + '">';
@@ -88,27 +86,12 @@ $(document).ready(function () {
             output += '</a> <label id="likeCnt' + result[i].boardId + '"><span class="badge">'+result[i].likeCnt+'</span></label>';
             output += " </div>";
             output += " <div class=\"card-footer text-muted\">";
-
-            if (result[i].boardStatus == 0) {
-                output += " <label>" + "게시자 : " + result[i].memberNick + "&nbsp;&nbsp;&nbsp;&nbsp;" + "</label> <label>" + "작성일 : " + timeFormat(result[i].boardModDate) + "</label>";
-            } else if (result[i].boardStatus == 1) {
-                output += " <label>" + "게시자 : " + result[i].memberNick + "&nbsp;&nbsp;&nbsp;&nbsp;" + "</label> <label>" + "수정일 : " + timeFormat(result[i].boardModDate) + "</label>";
-            }
-
+            output += " <label>" + "게시자 : " + result[i].writer + "&nbsp;&nbsp;&nbsp;&nbsp;" + "</label> <label>" + result[i].boardDate + "</label>";
             output += ' <label>댓글 수 <span class="badge">'+result[i].commentCnt+'</span></label>';
             output += " </div>";
             output += " </div>";
         }
         return output;
-    }
-
-    function timeFormat(date) {
-        console.log(new Date(date));
-
-        date = new Date(date);
-        var strDate = date + "";
-        var boardDate = strDate.split(' ');
-        return boardDate[0] + " " + boardDate[1] + " " + boardDate[2] + " " + boardDate[3] + " " + boardDate[4];
     }
 });
 
