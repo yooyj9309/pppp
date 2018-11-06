@@ -53,21 +53,20 @@ public class BoardController {
     }
 
     @PutMapping(value = "/{boardId}")
-    public void updateBoard(BoardDTO inputBoard, MultipartFile updateFile, Principal principal) {
+    public void updateBoard(@PathVariable("boardId") long boardId, @Valid BoardDTO inputBoard, MultipartFile updateFile, Principal principal) {
         LOGGER.info(inputBoard.toString());
-
+        inputBoard.setBoardId(boardId);
         boardService.updateBoardById(inputBoard,updateFile,principal);
     }
-/*
-    @DeleteMapping(value = "main/{boardId}")
-    public ResponseEntity<String> deleteBoard(@PathVariable("boardId") long boardId, Principal principal) {
+
+    @DeleteMapping(value = "/{boardId}")
+    public void deleteBoard(@PathVariable("boardId") long boardId, Principal principal) {
         LOGGER.info(boardId + "번 게시판 삭제하기");
         boardService.deleteBoardById(boardId, principal);
 
-        return new ResponseEntity<String>("게시글을 삭제하였습니다.", HttpStatus.OK);
     }
 
-
+/*
     @GetMapping(value = "dashboard")
     public ModelAndView getDashBoardView(ModelAndView mav, Principal principal) {
         List<Board> boardListByMemberEmail = boardService.getBoardListByMemberEmail(principal.getName());

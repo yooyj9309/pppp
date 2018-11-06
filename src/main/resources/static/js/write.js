@@ -21,8 +21,8 @@ $(document).ready(function () {
             data: fileData,
             processData: false,
             contentType: false,
-            success: function (response) {
-                alert(response);
+            success: function () {
+                alert("게시물을 등록하였습니다.");
                 location.href = "/main"
             },
             error: function (response) {

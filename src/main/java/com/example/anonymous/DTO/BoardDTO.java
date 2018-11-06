@@ -28,7 +28,7 @@ import java.util.Date;
 public class BoardDTO {
     private static final Logger LOGGER = LoggerFactory.getLogger(BoardDTO.class);
 
-    private long  boardId;
+    private long boardId;
 
     @NotBlank(message = "제목을 입력해주세요.")
     @Size(max = 500, min = 1, message = "제목 길이를 확인 해주세요.")
@@ -51,7 +51,7 @@ public class BoardDTO {
     private LikeStatus likeStatus;
 
     //프론트에 보여야하는 데이터들
-    public BoardDTO(Board board){
+    public BoardDTO(Board board) {
         this.boardId = board.getBoardId();
         this.boardSubject = board.getBoardSubject();
         this.boardContents = board.getBoardContents();
@@ -65,9 +65,9 @@ public class BoardDTO {
         this.boardDate = formatDate(board.getBoardRegDate());
     }
 
-    public Board toEntity(String filePath, Member member){
+    public Board toEntity(String filePath, Member member) {
         Board board = new Board();
-        
+
         board.setBoardSubject(this.boardSubject);
         board.setBoardContents(this.boardContents);
         board.setMember(member);
@@ -78,7 +78,7 @@ public class BoardDTO {
         return board;
     }
 
-    public Board toUpdate(Board board){
+    public Board toUpdate(Board board) {
         board.setBoardStatus(BoardStatus.UPDATED);
         board.setBoardModDate(new Date());
         board.setBoardSubject(this.boardSubject);
@@ -86,19 +86,22 @@ public class BoardDTO {
 
         return board;
     }
-    private String formatDate(Date date){
+
+    private String formatDate(Date date) {
         String dateResult = "";
 
-        switch (this.boardStatus){
+        switch (this.boardStatus) {
             case CREATED:
-                dateResult =  "작성 일 : "+date.toString();
+                dateResult = date.toString() + "(작성됨)";
                 break;
             case UPDATED:
-                dateResult = "수정 일 : "+date.toString();
+                dateResult = date.toString() + "(수정됨)";
                 break;
             case DELETED:
                 dateResult = "삭제 된 게시글 입니다.";
                 break;
+            default:
+                dateResult = date.toString() + "(작성됨)";
         }
         return dateResult;
     }
