@@ -65,7 +65,10 @@ public class BoardController {
         boardService.deleteBoardById(boardId, principal);
 
     }
-
+    @PostMapping(value = "/like")
+    public int processLike(@RequestParam long boardId,Principal principal) {
+        return boardService.processLikeByBoardIdAndMemberEmail(boardId, principal.getName());
+    }
 /*
     @GetMapping(value = "dashboard")
     public ModelAndView getDashBoardView(ModelAndView mav, Principal principal) {
@@ -80,10 +83,6 @@ public class BoardController {
         return mav;
     }
 
-    @PostMapping(value = "main/like")
-    public int processLike(@RequestParam long boardId,Principal principal) {
 
-        return boardService.processLikeByBoardIdAndMemberEmail(boardId,principal.getName());
-    }
 */
 }

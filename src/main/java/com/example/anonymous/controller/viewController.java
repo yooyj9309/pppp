@@ -4,6 +4,7 @@ import com.example.anonymous.DTO.BoardDTO;
 import com.example.anonymous.domain.Board;
 import com.example.anonymous.repository.BoardRepository;
 import com.example.anonymous.repository.MemberRepository;
+import com.example.anonymous.service.BoardService;
 import com.example.anonymous.service.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,8 @@ public class viewController {
     @Autowired
     private BoardRepository boardRepository;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(viewController.class);
+    @Autowired
+    private BoardService boardService;
 
     @GetMapping(value = "login")
     public String getLoginView(Model model) {
@@ -56,9 +58,13 @@ public class viewController {
     }
 
     @GetMapping(value = "board/{boardId}")
-    public String getDetailView(@PathVariable("boardId") long boardId, Model model) {
-        BoardDTO board = new BoardDTO(boardRepository.findByBoardId(boardId));
-        model.addAttribute("board",board);
+    public String getDetailView(@PathVariable("boardId") long boardId, Model model, Principal principal) {
+        Board board = boardRepository.findByBoardId(boardId);
+        boardService.processViewCnt(board,principal);
+        BoardDTO boardDTO = new BoardDTO(board);
+
+
+        model.addAttribute("board",boardDTO);
 
         return "view";
     }

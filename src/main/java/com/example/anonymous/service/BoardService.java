@@ -42,6 +42,8 @@ public class BoardService {
     private static final int ONE_PAGE_SIZE = 5;
     private static final int FIRST_BOARD_SIGN = -1;
 
+    private static final int PRESS_LIKE_SIGN = 0;
+    private static final int PRESS_CANCEL_SIGN = 1;
     @Autowired
     BoardRepository boardRepository;
 
@@ -214,50 +216,42 @@ public class BoardService {
             throw new ServerException("게시 글 삭제 중 문제가 발생");
         }
     }
+
+    public void processViewCnt(Board board, Principal principal){
+        if(board!=null) {
+            if (!board.getMember().getMemberEmail().equals(principal.getName())){
+                board.setViewCnt(board.getViewCnt()+1);
+                boardRepository.save(board);
+            }
+        }
+    }
 /*
     public List<Board> getBoardListByMemberEmail(String memberEmail) {
         List<Board> boardListByMemberEmail = boardRepository.findAllByMemberMemberEmail(memberEmail);
         return boardListByMemberEmail;
     }
+*/
 
-    @Transactional
     public int processLikeByBoardIdAndMemberEmail(long boardId, String memberEmail) {
-        LikeTable likeTable = likeRepository.findByBoardIdAndMemberEmail(boardId, memberEmail);
-        Board likeBoard = boardRepository.findBoardByBoardId(boardId);
+        Board board = boardRepository.findByBoardId(boardId);
+        Member member = memberRepository.findMemberByMemberEmail(memberEmail);
+        LikeTable likeTable = likeRepository.findByBoardAndMember(board, member);
 
-        int likeStatus = 0;
+        LOGGER.info(board.toString()+" "+boardId);
+        if(likeTable == null) {
+            likeTable = new LikeTable(board,member);
+            board.setLikeCnt(board.getLikeCnt()+1);
 
-        if(likeBoard == null){
-            throw new InvalidInputException("잘못된(존재하지 않은) 게시글 접근 입니다.");
+            likeRepository.save(likeTable);
+            boardRepository.save(board);
+            return PRESS_LIKE_SIGN;
+        }else{
+            likeRepository.deleteById(likeTable.getLikeId());
+            board.setLikeCnt(board.getLikeCnt()-1);
+            boardRepository.save(board);
+
+            return PRESS_CANCEL_SIGN;
         }
-
-        if (likeTable == null) {
-            likeTable = new LikeTable();
-            likeTable.setBoardId(boardId);
-            likeTable.setMemberEmail(memberEmail);
-
-            processLike(likeTable, LIKE_ACTIVE_STATUS, likeBoard, 1);
-        }
-        else if (likeTable.getCheckLike() == LIKE_CANCEL_STATUS) {
-            processLike(likeTable, LIKE_ACTIVE_STATUS, likeBoard, 1);
-        }
-        else if (likeTable.getCheckLike() == LIKE_ACTIVE_STATUS) {
-            processLike(likeTable, LIKE_CANCEL_STATUS, likeBoard, -1);
-            likeStatus = 1;
-        }
-        else {
-            throw new InvalidInputException("잘못된 접근입니다.");
-        }
-
-        boardRepository.save(likeBoard);
-        likeRepository.save(likeTable);
-
-        return likeStatus;
     }
 
-    private void processLike(LikeTable likeTable, int likeStatus, Board likeBoard, int variation) {
-        likeTable.setCheckLike(likeStatus);
-        likeBoard.setLikeCnt(likeBoard.getLikeCnt() + variation);
-    }
-    */
 }

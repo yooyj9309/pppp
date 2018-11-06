@@ -75,7 +75,7 @@ $(document).ready(function () {
             output += "</a>";
             output += "<p class=\"card-text\">" + result[i].boardContents + "</p>";
             output += " <a type='button' href=\"/board/" + result[i].boardId + "\" class=\"btn btn-primary\">상세보기 <span class=\"badge\">"+result[i].viewCnt+"</span></a>&nbsp;&nbsp;";
-            output += '<a onclick="likeProcess(' + result[i].boardId + ',' + result[i].likeStatus + ');">';
+            output += '<a onclick="likeProcess(' + result[i].boardId + ');">';
 
             if (result[i].likeStatus == "UNLIKE") {
                 output += '<img src = "images/noheart.png" id="like' + result[i].boardId + '">';
@@ -95,13 +95,13 @@ $(document).ready(function () {
     }
 });
 
-function likeProcess(boardId, likeStatus) {
-    console.log(boardId+" "+likeStatus);
+function likeProcess(boardId) {
+    console.log(boardId);
     var likeCnt = document.getElementById("likeCnt" + boardId).innerText;
 
     $.ajax({
         type: "post",
-        url: "main/like?boardId="+boardId,
+        url: "board/like?boardId="+boardId,
         success: function (result) {
             console.log(result);
             switch (result) {

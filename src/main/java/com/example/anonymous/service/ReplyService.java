@@ -62,19 +62,7 @@ public class ReplyService {
 
     }
 
-    public List<Reply> getReplyListByBoardId(long boardId, int page) {
-        Pageable request = new PageRequest(page, ONE_REPLY_SIZE, Sort.Direction.DESC, "replyRegDate");
-        List<Reply> replyList = replyRepository.findAllByBoardBoardIdAndReplyParentId(boardId, ROOT_REPLY, request);
 
-        for (Reply parentReply : replyList) {
-            List<Reply> commentList = getCommentListByReplyId(parentReply.getReplyId());
-            if (commentList == null || commentList.isEmpty())
-                continue;
-            parentReply.setCommentList(commentList);
-        }
-
-        return replyList;
-    }
 
     public void updateReplyByReplyId(long replyId, String content) {
         Reply reply = replyRepository.findByReplyId(replyId);

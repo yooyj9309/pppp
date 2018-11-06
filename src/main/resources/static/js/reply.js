@@ -96,7 +96,7 @@ function replyList(){
     var boardId = $("#paramBoardId").val();
     console.log(page);
     $.ajax({
-        url : '/reply/list?boardId='+boardId+"&page=0",
+        url : '/replies/?boardId='+boardId+"&page=0",
         type : 'get',
         success : function(data){
             var replyHTML = renderingReplyList(data);

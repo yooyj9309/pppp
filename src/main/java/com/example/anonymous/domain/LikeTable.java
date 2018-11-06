@@ -2,6 +2,7 @@ package com.example.anonymous.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "likeId")
-
+@NoArgsConstructor()
 @Entity
 public class LikeTable {
 
@@ -40,5 +41,10 @@ public class LikeTable {
         }
         this.board = board;
         board.getLikeTableList().add(this);
+    }
+
+    public LikeTable(Board board,Member member){
+        this.board = board;
+        this.member = member;
     }
 }
