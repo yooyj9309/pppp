@@ -1,17 +1,15 @@
 package com.example.anonymous.restcontroller;
 
-import com.example.anonymous.domain.Reply;
+import com.example.anonymous.dto.ReplyDTO;
 import com.example.anonymous.service.ReplyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 
 
 @RestController
@@ -21,21 +19,22 @@ public class ReplyController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReplyController.class);
     @Autowired
     ReplyService replyService;
+
+
+    @PostMapping()
+    public void insertReply(@RequestParam("boardId") long boardId, @Valid ReplyDTO reply, Principal principal){
+        LOGGER.info(reply.toString());
+        replyService.insertReply(reply,boardId,principal);
+    }
 /*
+
+
     @GetMapping(value="/list")
     public List<Reply> sendReplyList(@RequestParam("boardId") long boardId, @RequestParam("page") int page) {
         List<Reply> replyList = replyService.getReplyListByBoardId(boardId, page);
 
         return replyList;
     }
-
-    @PostMapping()
-    public ResponseEntity<String> insertReply(@RequestParam("boardId") long boardId, Reply reply, Principal principal){
-        LOGGER.info(reply.toString());
-        replyService.insertReply(reply,boardId,principal);
-        return new ResponseEntity<String>("댓글 작성에 성공하였습니다.", HttpStatus.OK);
-    }
-
     @PutMapping()
     public ResponseEntity<String> updateReply(@RequestParam long replyId, @RequestParam String content) {
         LOGGER.info(replyId+" "+content);

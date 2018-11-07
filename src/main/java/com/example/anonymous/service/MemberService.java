@@ -1,6 +1,6 @@
 package com.example.anonymous.service;
 
-import com.example.anonymous.DTO.MemberDTO;
+import com.example.anonymous.dto.MemberDTO;
 import com.example.anonymous.domain.Member;
 import com.example.anonymous.exception.InvalidInputException;
 import com.example.anonymous.exception.NoAuthException;
@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -36,6 +35,7 @@ public class MemberService {
     private JavaMailSender mailSender;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MemberService.class);
+    private static final int WEEK = 7;
 
     @Transactional
     public void insertMember(MemberDTO memberDTO) {
@@ -57,7 +57,12 @@ public class MemberService {
         }
 
         String key = new TempKey().getKey(50, false);
-        newMember = memberDTO.toEntity(key);
+
+        if(newMember.getMemberStatus() == MemberStatus.DELETED){
+            newMember.recoverMember(nickName,key);
+        }else {
+            newMember = memberDTO.toEntity(key);
+        }
         memberRepository.save(newMember);
 
         LOGGER.info("데이터 베이스 저장 및 이메일 인증 요청");
@@ -114,32 +119,22 @@ public class MemberService {
         member.setMailCheck(MailCheck.OK);
         memberRepository.save(member);
     }
-/*
+
     public void changNickName(String nickName,String sessionEmail){
-        if(StringUtils.isEmpty(nickName)){
-            throw new InvalidInputException("닉네임을 입력해주세요");
+        String memberNickName = memberRepository.findMemberNickByMemberNick(nickName);
+
+        if(!StringUtils.isEmpty(memberNickName)){
+            throw new InvalidInputException("이미 존재하는 닉네임 입니다.");
         }
-        Member member = null;
-        try{
-            member = memberRepository.findMemberByMemberNick(nickName);
 
-            if(member!=null) {
-                throw new InvalidInputException("이미 존재하는 닉네임 입니다.");
-            }else {
-                member = memberRepository.findMemberByMemberEmail(sessionEmail);
-                LOGGER.info(member.getMemberRegDate()+" "+member.getMemberModDate());
+        Member member =  memberRepository.findMemberByMemberEmail(sessionEmail);;
+        if(member.getMemberModDate() == null || getDiffDate(member.getMemberModDate()) >= WEEK){
+            member.setMemberNick(nickName);
+            member.setMemberModDate(new Date());
 
-                if(member.getMemberModDate() == null || getDiffDate(member.getMemberModDate())>=7) {
-                    member.setMemberNick(nickName);
-                    member.setMemberModDate(new Date());
-                    memberRepository.save(member);
-                }else{
-                    throw new InvalidInputException("닉네임을 바꾸기에 너무 이릅니다.");
-                }
-
-            }
-        }catch (DataAccessException e){
-            throw  new ServerException("닉네임을 바꾸던 도중 서버 에러");
+            memberRepository.save(member);
+        } else{
+            throw new InvalidInputException("닉네임을 바꾸기에 너무 이릅니다.");
         }
     }
 
@@ -150,15 +145,16 @@ public class MemberService {
         LOGGER.info(diffDate+" ");
         return diffDate;
     }
+
     public void deleteMemberByMemberEmail(String memberEmail){
         if(StringUtils.isEmpty(memberEmail)){
             throw new NoAuthException("삭제할 권한이 없습니다.");
         }
         Member member = memberRepository.findMemberByMemberEmail(memberEmail);
-        member.setMemberCheck(DELETED_MEMBER_STATUS);
+        member.setMemberStatus(MemberStatus.DELETED);
         memberRepository.save(member);
     }
-*/
+
     public String getRandomName(){
         final int leastNameSize = 4;
         final int MAX_NAME_SIZE = 12;

@@ -37,9 +37,6 @@ public class Reply {
     @JoinColumn(name = "memberId")
     private Member member;
 
-    @Column(nullable = false,length=100)
-    private String memberNick;
-
     @Column
     private long replyParentId;
 

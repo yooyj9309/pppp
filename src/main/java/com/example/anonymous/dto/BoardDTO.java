@@ -1,22 +1,16 @@
-package com.example.anonymous.DTO;
+package com.example.anonymous.dto;
 
 
 import com.example.anonymous.domain.Board;
 import com.example.anonymous.domain.Member;
-import com.example.anonymous.exception.InvalidInputException;
-import com.example.anonymous.repository.MemberRepository;
-import com.example.anonymous.restcontroller.BoardController;
 import com.example.anonymous.status.BoardStatus;
 import com.example.anonymous.status.LikeStatus;
 import lombok.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.security.Principal;
 import java.util.Date;
 
 
@@ -62,7 +56,7 @@ public class BoardDTO {
         this.writer = board.getWriter();
         this.writerEmail = board.getMember().getMemberEmail();
 
-        this.boardDate = formatDate(board.getBoardRegDate());
+        this.boardDate = formatDate(board);
     }
 
     public Board toEntity(String filePath, Member member) {
@@ -87,21 +81,21 @@ public class BoardDTO {
         return board;
     }
 
-    private String formatDate(Date date) {
+    private String formatDate(Board board) {
         String dateResult = "";
 
         switch (this.boardStatus) {
             case CREATED:
-                dateResult = date.toString() + "(작성됨)";
+                dateResult = board.getBoardRegDate() + "(작성됨)";
                 break;
             case UPDATED:
-                dateResult = date.toString() + "(수정됨)";
+                dateResult = board.getBoardModDate() + "(수정됨)";
                 break;
             case DELETED:
                 dateResult = "삭제 된 게시글 입니다.";
                 break;
             default:
-                dateResult = date.toString() + "(작성됨)";
+                dateResult =  board.getBoardRegDate()+"";
         }
         return dateResult;
     }

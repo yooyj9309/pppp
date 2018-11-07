@@ -1,9 +1,9 @@
 package com.example.anonymous.service;
 
+import com.example.anonymous.dto.ReplyDTO;
 import com.example.anonymous.domain.Board;
 import com.example.anonymous.domain.Member;
 import com.example.anonymous.domain.Reply;
-import com.example.anonymous.exception.InvalidInputException;
 import com.example.anonymous.exception.ServerException;
 import com.example.anonymous.repository.BoardRepository;
 import com.example.anonymous.repository.MemberRepository;
@@ -12,16 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 
 import java.security.Principal;
-import java.util.Date;
-import java.util.List;
 
 
 @Service
@@ -40,20 +34,12 @@ public class ReplyService {
     private MemberRepository memberRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReplyService.class);
-/*
-    public void insertReply(Reply reply, long boardId, Principal principal) {
-        String replyContents = reply.getReplyContents();
-        if (StringUtils.isEmpty(replyContents)) {
-            throw new InvalidInputException("댓글을 입력해주세요.");
-        }
-        Board board = boardRepository.findBoardByBoardId(boardId);
+
+    public void insertReply(ReplyDTO replyDTO, long boardId, Principal principal) {
+        Board board = boardRepository.findByBoardId(boardId);
         Member authorMember = memberRepository.findMemberByMemberEmail(principal.getName());
 
-        reply.setMemberNick(authorMember.getMemberNick());
-        reply.setBoard(board);
-        reply.setReplyModDate(new Date());
-        reply.setSessionEmail(principal.getName());
-
+        Reply reply = replyDTO.toEntity(board,authorMember);
         try {
             replyRepository.save(reply);
         } catch (DataAccessException e) {
@@ -62,7 +48,7 @@ public class ReplyService {
 
     }
 
-
+/*
 
     public void updateReplyByReplyId(long replyId, String content) {
         Reply reply = replyRepository.findByReplyId(replyId);

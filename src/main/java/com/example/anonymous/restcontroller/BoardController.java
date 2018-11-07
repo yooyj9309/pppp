@@ -1,22 +1,15 @@
 package com.example.anonymous.restcontroller;
 
-import com.example.anonymous.DTO.BoardDTO;
-import com.example.anonymous.domain.Board;
-import com.example.anonymous.domain.Reply;
+import com.example.anonymous.dto.BoardDTO;
 import com.example.anonymous.repository.BoardRepository;
 import com.example.anonymous.service.BoardService;
 import com.example.anonymous.service.ReplyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -82,7 +75,5 @@ public class BoardController {
 
         return mav;
     }
-
-
 */
 }

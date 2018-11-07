@@ -1,4 +1,4 @@
-package com.example.anonymous.DTO;
+package com.example.anonymous.dto;
 
 import com.example.anonymous.domain.*;
 import com.example.anonymous.status.MailCheck;

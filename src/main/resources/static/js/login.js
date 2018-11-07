@@ -86,8 +86,8 @@ $(document).ready(function () {
             type: "post",
             url: "/signup",
             data: param,
-            success: function (response) {
-                alert(response);
+            success: function () {
+                alert("이메일 인증을 해주세요.");
                 location.href = "/login";
             },
             error: function (response) {

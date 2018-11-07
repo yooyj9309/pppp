@@ -1,6 +1,6 @@
 package com.example.anonymous.service;
 
-import com.example.anonymous.DTO.BoardDTO;
+import com.example.anonymous.dto.BoardDTO;
 import com.example.anonymous.domain.Board;
 import com.example.anonymous.domain.LikeTable;
 import com.example.anonymous.domain.Member;
@@ -11,11 +11,9 @@ import com.example.anonymous.repository.BoardRepository;
 import com.example.anonymous.repository.LikeRepository;
 import com.example.anonymous.repository.MemberRepository;
 import com.example.anonymous.repository.ReplyRepository;
-import com.example.anonymous.restcontroller.BoardController;
 import com.example.anonymous.status.BoardStatus;
 import com.example.anonymous.status.LikeStatus;
 import com.example.anonymous.utils.ImgUtil;
-import javafx.beans.InvalidationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -225,12 +222,6 @@ public class BoardService {
             }
         }
     }
-/*
-    public List<Board> getBoardListByMemberEmail(String memberEmail) {
-        List<Board> boardListByMemberEmail = boardRepository.findAllByMemberMemberEmail(memberEmail);
-        return boardListByMemberEmail;
-    }
-*/
 
     public int processLikeByBoardIdAndMemberEmail(long boardId, String memberEmail) {
         Board board = boardRepository.findByBoardId(boardId);
@@ -253,5 +244,11 @@ public class BoardService {
             return PRESS_CANCEL_SIGN;
         }
     }
+/*
+    public List<Board> getBoardListByMemberEmail(String memberEmail) {
+        List<Board> boardListByMemberEmail = boardRepository.findAllByMemberMemberEmail(memberEmail);
+        return boardListByMemberEmail;
+    }
+*/
 
 }

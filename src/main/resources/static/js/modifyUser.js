@@ -8,11 +8,11 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            type: "post",
-            url: "nick",
+            type: "put",
+            url: "../nick_name",
             data: {'nickName' : nickName},
-            success: function (response) {
-                alert(response);
+            success: function () {
+                alert("닉네임이 변경되었습니다.");
                 location.href = "/main"
             },
             error: function (response) {
@@ -24,13 +24,13 @@ $(document).ready(function () {
         if(confirm("정말 탈퇴하시겠습니까?")){
             $.ajax({
                 type: "delete",
-                url: "withdraw",
-                success: function (response) {
-                    alert(response);
+                url: "../member_out",
+                success: function () {
+                    alert("회원 탈퇴하셨습니다.");
                     location.href = "/login"
                 },
-                error: function (response) {
-                    alert(response.responseText);
+                error: function () {
+                    alert("회원 탈퇴 실패");
                 }
             });
         }

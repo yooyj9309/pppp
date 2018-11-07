@@ -61,4 +61,11 @@ public class Member {
     @Column(nullable = false, unique = true, length=100)
     private String emailKey;
 
+    public void recoverMember(String nickName, String key){
+        this.setMemberNick(nickName);
+        this.setMemberModDate(new Date());
+        this.setMemberStatus(MemberStatus.CREATED);
+        this.setEmailKey(key);
+        this.setMailCheck(MailCheck.NO);
+    }
 }
